@@ -1,0 +1,270 @@
+/* Estilos para a página de Território do Dia */
+
+/* Território do Dia */
+.territorio-card {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    overflow: hidden;
+    margin-bottom: 30px;
+    transition: transform 0.2s ease;
+}
+
+.territorio-card:hover {
+    transform: translateY(-5px);
+}
+
+.territorio-header {
+    background-color: #e8f4ff;
+    padding: 20px;
+    border-bottom: 1px solid #e0eaf5;
+}
+
+.territorio-header h3 {
+    margin: 0;
+    color: #2c3e50;
+    font-weight: 600;
+}
+
+.badge-lg {
+    font-size: 1rem;
+    padding: 8px 15px;
+    border-radius: 20px;
+}
+
+/* Estatísticas */
+.territorio-stats {
+    display: flex;
+    flex-wrap: wrap;
+    padding: 20px;
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.stat-box {
+    flex: 1;
+    min-width: 150px;
+    display: flex;
+    align-items: center;
+    padding: 10px 15px;
+    border-right: 1px solid #e9ecef;
+}
+
+.stat-box:last-child {
+    border-right: none;
+}
+
+.stat-icon {
+    font-size: 2rem;
+    color: #3498db;
+    margin-right: 15px;
+}
+
+.stat-content {
+    display: flex;
+    flex-direction: column;
+}
+
+.stat-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #2c3e50;
+}
+
+.stat-label {
+    font-size: 0.85rem;
+    color: #7f8c8d;
+}
+
+/* Barra de progresso */
+.territorio-progress {
+    padding: 20px;
+    background-color: #fff;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.progress-label {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    font-size: 0.9rem;
+    color: #7f8c8d;
+}
+
+.progress {
+    height: 10px;
+    border-radius: 5px;
+}
+
+/* Informações */
+.territorio-info {
+    padding: 20px;
+    background-color: #fff;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.info-row {
+    display: flex;
+    margin-bottom: 10px;
+}
+
+.info-row:last-child {
+    margin-bottom: 0;
+}
+
+.info-label {
+    width: 180px;
+    font-weight: 600;
+    color: #7f8c8d;
+}
+
+.info-value {
+    flex: 1;
+    color: #2c3e50;
+}
+
+/* Ações */
+.territorio-actions {
+    padding: 20px;
+    background-color: #f8f9fa;
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+}
+
+/* Sem território */
+.sem-territorio-card {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    padding: 40px 20px;
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.sem-territorio-icon {
+    font-size: 5rem;
+    color: #bdc3c7;
+    margin-bottom: 20px;
+}
+
+.sem-territorio-card h3 {
+    color: #2c3e50;
+    margin-bottom: 15px;
+}
+
+.sem-territorio-card p {
+    color: #7f8c8d;
+    margin-bottom: 30px;
+}
+
+.sem-territorio-actions {
+    margin-top: 20px;
+}
+
+/* Próximas designações */
+.proximas-designacoes {
+    margin-top: 40px;
+}
+
+.section-title {
+    font-size: 1.5rem;
+    color: #2c3e50;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #e9ecef;
+}
+
+/* Tabela */
+.table thead th {
+    background-color: #f8f9fa;
+    border-bottom: 2px solid #e9ecef;
+    font-weight: 600;
+    color: #7f8c8d;
+}
+
+.table tbody tr {
+    transition: background-color 0.2s ease;
+}
+
+.table tbody tr:hover {
+    background-color: #f8f9fa;
+}
+
+/* Loading */
+#loading {
+    margin: 50px 0;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .territorio-stats {
+        flex-direction: column;
+    }
+    
+    .stat-box {
+        border-right: none;
+        border-bottom: 1px solid #e9ecef;
+        padding: 15px 0;
+    }
+    
+    .stat-box:last-child {
+        border-bottom: none;
+    }
+    
+    .info-row {
+        flex-direction: column;
+    }
+    
+    .info-label {
+        width: 100%;
+        margin-bottom: 5px;
+    }
+    
+    .territorio-actions {
+        flex-direction: column;
+    }
+    
+    .territorio-actions a {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+}
+
+/* Animações */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.fade-in {
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+/* Impressão */
+@media print {
+    header, nav, .territorio-actions, #loading, .sem-territorio-actions {
+        display: none !important;
+    }
+    
+    .territorio-card, .sem-territorio-card {
+        box-shadow: none;
+        border: 1px solid #ddd;
+    }
+    
+    .container-fluid {
+        padding: 0;
+    }
+    
+    main {
+        padding: 0 !important;
+        margin: 0 !important;
+        width: 100% !important;
+    }
+    
+    .col-md-9, .col-lg-10 {
+        width: 100% !important;
+        max-width: 100% !important;
+        flex: 0 0 100% !important;
+    }
+}

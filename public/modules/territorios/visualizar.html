@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visualização de Territórios - Sistema de Gerenciamento</title>
+    <!-- CSS comum -->
+    <link href="/assets/css/main.css" rel="stylesheet">
+    <!-- CSS específico da página -->
+    <link href="/modules/territorios/css/visualizar.css" rel="stylesheet">
+    <!-- Frameworks externos via CDN -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.3/leaflet.css" rel="stylesheet">
+</head>
+<body>
+    <header class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0 shadow">
+        <a class="navbar-brand col-md-3 col-lg-2 me-0 px-3" href="#">Sistema de Territórios</a>
+        <button class="navbar-toggler position-absolute d-md-none collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="w-100"></div>
+        <div class="navbar-nav">
+            <div class="nav-item text-nowrap">
+                <a class="nav-link px-3" href="#">Sair</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="container-fluid">
+        <div class="row">
+            <nav id="sidebar-container" class="col-md-3 col-lg-2 d-md-block sidebar collapse">
+                <!-- Sidebar será carregado aqui via JavaScript -->
+            </nav>
+
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                    <h1 class="h2">Visualização de Territórios</h1>
+                    <div class="btn-toolbar mb-2 mb-md-0">
+                        <div class="btn-group me-2">
+                            <button type="button" class="btn btn-sm btn-outline-secondary" id="btn-view-mode" data-mode="lista">
+                                <i class="fas fa-map"></i> Alternar Visualização
+                            </button>
+                            <button type="button" class="btn btn-sm btn-outline-secondary" id="btn-exportar-dados">
+                                <i class="fas fa-file-export"></i> Exportar
+                            </button>
+                            <button type="button" class="btn btn-sm btn-outline-primary" id="btn-imprimir">
+                                <i class="fas fa-print"></i> Imprimir
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Seleção de Território e Filtros -->
+                <div class="card mb-4 territory-filter-card">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0"><i class="fas fa-filter me-2"></i>Selecionar e Filtrar</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="select-territorio" class="form-label">Território:</label>
+                                <select class="form-select" id="select-territorio">
+                                    <option value="">Selecione um território</option>
+                                    <!-- Opções serão adicionadas via JavaScript -->
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="select-saida" class="form-label">Filtrar por Saída de Campo:</label>
+                                <select class="form-select" id="select-saida">
+                                    <option value="">Todas as saídas</option>
+                                    <!-- Opções serão adicionadas via JavaScript -->
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="filter-container p-3 bg-light rounded">
+                            <h6 class="filter-title mb-3"><i class="fas fa-sliders-h me-2"></i>Filtros Avançados</h6>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="filter-group">
+                                        <h6 class="filter-subtitle">Tipo de Imóvel:</h6>
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" id="filtro-residencial" checked>
+                                            <label class="form-check-label" for="filtro-residencial">Residenciais</label>
+                                        </div>
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" id="filtro-comercial" checked>
+                                            <label class="form-check-label" for="filtro-comercial">Comerciais</label>
+                                        </div>
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" id="filtro-predio" checked>
+                                            <label class="form-check-label" for="filtro-predio">Prédios</label>
+                                        </div>
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" id="filtro-vila" checked>
+                                            <label class="form-check-label" for="filtro-vila">Vilas</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-4">
+                                    <div class="filter-group">
+                                        <h6 class="filter-subtitle">Status de Atendimento:</h6>
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" id="filtro-atendidos" checked>
+                                            <label class="form-check-label" for="filtro-atendidos">Atendidos</label>
+                                        </div>
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" id="filtro-nao-atendidos" checked>
+                                            <label class="form-check-label" for="filtro-nao-atendidos">Não Atendidos</label>
+                                        </div>
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" id="filtro-recusados" checked>
+                                            <label class="form-check-label" for="filtro-recusados">Recusados</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-4">
+                                    <div class="filter-group">
+                                        <h6 class="filter-subtitle">Período:</h6>
+                                        <div class="mb-2">
+                                            <label for="filtro-data-inicio" class="form-label small">Data Inicial:</label>
+                                            <input type="date" class="form-control form-control-sm" id="filtro-data-inicio">
+                                        </div>
+                                        <div class="mb-2">
+                                            <label for="filtro-data-fim" class="form-label small">Data Final:</label>
+                                            <input type="date" class="form-control form-control-sm" id="filtro-data-fim">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="d-flex justify-content-end mt-3">
+                                <button type="button" class="btn btn-outline-secondary btn-sm me-2" id="btn-limpar-filtros">
+                                    <i class="fas fa-eraser me-1"></i> Limpar Filtros
+                                </button>
+                                <button type="button" class="btn btn-primary btn-sm" id="btn-aplicar-filtros">
+                                    <i class="fas fa-check me-1"></i> Aplicar Filtros
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Visualização em Abas -->
+                <ul class="nav nav-tabs mb-3" id="viewTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="lista-tab" data-bs-toggle="tab" data-bs-target="#lista-view" type="button" role="tab" aria-controls="lista-view" aria-selected="true">
+                            <i class="fas fa-list me-1"></i> Visualização em Lista
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="mapa-tab" data-bs-toggle="tab" data-bs-target="#mapa-view" type="button" role="tab" aria-controls="mapa-view" aria-selected="false">
+                            <i class="fas fa-map me-1"></i> Visualização em Mapa
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="stats-tab" data-bs-toggle="tab" data-bs-target="#stats-view" type="button" role="tab" aria-controls="stats-view" aria-selected="false">
+                            <i class="fas fa-chart-bar me-1"></i> Estatísticas
+                        </button>
+                    </li>
+                </ul>
+
+                <!-- Loading e Mensagem Sem Dados -->
+                <div class="text-center my-5" id="loading">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Carregando...</span>
+                    </div>
+                    <p class="mt-2">Carregando territórios...</p>
+                </div>
+                
+                <div class="alert alert-info d-none" id="sem-dados">
+                    <i class="fas fa-info-circle me-2"></i> Nenhum território cadastrado ou selecionado. Por favor, cadastre territórios ou selecione um território existente.
+                </div>
+
+                <!-- Conteúdo das Abas -->
+                <div class="tab-content" id="viewTabsContent">
+                    <!-- Visualização em Lista -->
+                    <div class="tab-pane fade show active" id="lista-view" role="tabpanel" aria-labelledby="lista-tab">
+                        <!-- Cabeçalho do Território -->
+                        <div class="territory-header d-none" id="territory-header">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h3 id="territorio-nome">Nome do Território</h3>
+                                    <p class="text-muted mb-0" id="territorio-descricao">Descrição do território</p>
+                                </div>
+                                <div>
+                                    <button class="btn btn-outline-primary btn-sm" id="btn-designar-territorio">
+                                        <i class="fas fa-tasks me-1"></i> Designar
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Barra de Progresso -->
+                        <div class="progress-container d-none" id="progress-container">
+                            <div class="progress-label">
+                                <span>Progresso de Atendimentos:</span>
+                                <span id="progresso-porcentagem">0% (0/0)</span>
+                            </div>
+                            <div class="progress">
+                                <div class="progress-bar bg-success" id="progresso-atendimentos" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                        </div>
+
+                        <!-- Estatísticas do Território -->
+                        <div class="territory-stats d-none" id="territory-stats">
+                            <div class="stat-card">
+                                <div class="stat-value" id="stat-total-imoveis">0</div>
+                                <div class="stat-label">Total de Imóveis</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-value" id="stat-atendidos">0</div>
+                                <div class="stat-label">Atendidos</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-value" id="stat-ruas">0</div>
+                                <div class="stat-label">Ruas</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-value" id="stat-pendentes">0</div>
+                                <div class="stat-label">Pendentes</div>
+                            </div>
+                        </div>
+
+                        <!-- Listagem de Ruas -->
+                        <div id="ruas-container" class="mt-4">
+                            <!-- As ruas serão adicionadas aqui dinamicamente -->
+                        </div>
+                    </div>
+                    
+                    <!-- Visualização em Mapa -->
+                    <div class="tab-pane fade" id="mapa-view" role="tabpanel" aria-labelledby="mapa-tab">
+                        <div class="alert alert-info mb-3">
+                            <i class="fas fa-info-circle me-2"></i> A visualização em mapa é uma representação esquemática do território. 
+                            Posicione o cursor sobre um imóvel para ver detalhes.
+                        </div>
+                        
+                        <div class="card">
+                            <div class="card-body p-0">
+                                <div id="mapa-territorio" style="height: 600px;">
+                                    <!-- O mapa será renderizado aqui -->
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="card mt-3">
+                            <div class="card-header">
+                                <h5 class="mb-0">Legenda</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="d-flex flex-wrap">
+                                    <div class="legend-item me-3 mb-2">
+                                        <span class="legend-color" style="background-color: #28a745;"></span>
+                                        Residencial Atendido
+                                    </div>
+                                    <div class="legend-item me-3 mb-2">
+                                        <span class="legend-color" style="background-color: #a1d8ab;"></span>
+                                        Residencial Não Atendido
+                                    </div>
+                                    <div class="legend-item me-3 mb-2">
+                                        <span class="legend-color" style="background-color: #007bff;"></span>
+                                        Comercial Atendido
+                                    </div>
+                                    <div class="legend-item me-3 mb-2">
+                                        <span class="legend-color" style="background-color: #9ac2f5;"></span>
+                                        Comercial Não Atendido
+                                    </div>
+                                    <div class="legend-item me-3 mb-2">
+                                        <span class="legend-color" style="background-color: #17a2b8;"></span>
+                                        Prédio Atendido
+                                    </div>
+                                    <div class="legend-item me-3 mb-2">
+                                        <span class="legend-color" style="background-color: #a1d6dc;"></span>
+                                        Prédio Não Atendido
+                                    </div>
+                                    <div class="legend-item me-3 mb-2">
+                                        <span class="legend-color" style="background-color: #ffc107;"></span>
+                                        Vila Atendida
+                                    </div>
+                                    <div class="legend-item me-3 mb-2">
+                                        <span class="legend-color" style="background-color: #ffe49c;"></span>
+                                        Vila Não Atendida
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Visualização de Estatísticas -->
+                    <div class="tab-pane fade" id="stats-view" role="tabpanel" aria-labelledby="stats-tab">
+                        <div class="row">
+                            <div class="col-md-6 mb-4">
+                                <div class="card h-100">
+                                    <div class="card-header">
+                                        <h5 class="mb-0">Tipos de Imóveis</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <canvas id="tiposImoveisChart"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6 mb-4">
+                                <div class="card h-100">
+                                    <div class="card-header">
+                                        <h5 class="mb-0">Status de Atendimentos</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <canvas id="statusAtendimentosChart"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-12 mb-4">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5 class="mb-0">Atendimentos por Período</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <canvas id="atendimentosPeriodoChart"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-12">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5 class="mb-0">Resumo Estatístico</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="table-responsive">
+                                            <table class="table table-striped">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Métricas</th>
+                                                        <th>Residenciais</th>
+                                                        <th>Comerciais</th>
+                                                        <th>Prédios</th>
+                                                        <th>Vilas</th>
+                                                        <th>Total</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="tabela-estatisticas">
+                                                    <!-- Dados serão adicionados via JavaScript -->
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Modal para registrar atendimento -->
+    <div class="modal fade" id="modal-atendimento" tabindex="-1" aria-labelledby="modal-atendimento-label" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modal-atendimento-label">Registrar Atendimento</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="form-atendimento">
+                        <input type="hidden" id="imovel-id">
+                        <div class="attendance-form-section">
+                            <p id="modal-info-imovel" class="fw-bold mb-3">Registrar atendimento para o imóvel:</p>
+                            <div class="alert alert-info" id="historico-atendimentos">
+                                <p class="mb-0"><i class="fas fa-history me-2"></i> Este imóvel ainda não foi atendido.</p>
+                            </div>
+                        </div>
+                        <div class="attendance-form-section">
+                            <label for="data-atendimento" class="form-label">Data do Atendimento:</label>
+                            <input type="date" class="form-control" id="data-atendimento" required>
+                            <div class="form-text">Informe a data em que o atendimento foi realizado.</div>
+                        </div>
+                        <div class="attendance-form-section">
+                            <label for="resultado-atendimento" class="form-label">Resultado:</label>
+                            <select class="form-select" id="resultado-atendimento" required>
+                                <option value="">Selecione...</option>
+                                <option value="positivo">Positivo</option>
+                                <option value="ausente">Morador Ausente</option>
+                                <option value="recusado">Recusou Atendimento</option>
+                                <option value="outro">Outro</option>
+                            </select>
+                        </div>
+                        <div class="attendance-form-section">
+                            <label for="observacoes" class="form-label">Observações (opcional):</label>
+                            <textarea class="form-control" id="observacoes" rows="3"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-danger d-none" id="btn-remover-atendimento">Remover Atendimento</button>
+                    <button type="button" class="btn btn-success" id="btn-confirmar-atendimento">Confirmar Atendimento</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para ver detalhes do imóvel -->
+    <div class="modal fade" id="modal-detalhes-imovel" tabindex="-1" aria-labelledby="modal-detalhes-imovel-label" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modal-detalhes-imovel-label">Detalhes do Imóvel</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <h6 class="text-muted">Endereço:</h6>
+                            <p id="detalhe-endereco">Rua das Flores, 123</p>
+                            
+                            <h6 class="text-muted mt-3">Tipo:</h6>
+                            <p id="detalhe-tipo">Residencial</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="text-muted">Status de Atendimento:</h6>
+                            <p id="detalhe-status">Não Atendido</p>
+                            
+                            <h6 class="text-muted mt-3">Último Atendimento:</h6>
+                            <p id="detalhe-ultimo-atendimento">Nunca atendido</p>
+                        </div>
+                    </div>
+                    
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            <h6 class="mb-0">Histórico de Atendimentos</h6>
+                        </div>
+                        <div class="card-body">
+                            <div id="historico-completo">
+                                <!-- Histórico será preenchido via JavaScript -->
+                                <p class="text-muted">Nenhum atendimento registrado para este imóvel.</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-header">
+                            <h6 class="mb-0">Observações</h6>
+                        </div>
+                        <div class="card-body">
+                            <div id="observacoes-imovel">
+                                <p class="text-muted">Nenhuma observação registrada para este imóvel.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                    <button type="button" class="btn btn-primary" id="btn-registrar-atendimento-detalhe">Registrar Atendimento</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript comum -->
+    <script src="/assets/js/common.js"></script>
+    <script src="/assets/js/data.js"></script>
+    <script src="/assets/js/components.js"></script>
+    <script src="/assets/js/notifications.js"></script>
+    <!-- Frameworks externos via CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/locale/pt-br.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.3/leaflet.js"></script>
+    <!-- JavaScript específico da página -->
+    <script src="/modules/territorios/js/visualizar.js"></script>
+
+    <script>
+        // Inicializar a página
+        document.addEventListener('DOMContentLoaded', initPage);
+    </script>
+</body>
+</html>

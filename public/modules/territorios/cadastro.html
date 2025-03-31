@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro de Territórios - Sistema de Gerenciamento</title>
+    <!-- CSS comum -->
+    <link href="/assets/css/main.css" rel="stylesheet">
+    <!-- CSS específico da página -->
+    <link href="/modules/territorios/css/cadastro.css" rel="stylesheet">
+    <!-- Frameworks externos via CDN -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <header class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0 shadow">
+        <a class="navbar-brand col-md-3 col-lg-2 me-0 px-3" href="#">Sistema de Territórios</a>
+        <button class="navbar-toggler position-absolute d-md-none collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="w-100"></div>
+        <div class="navbar-nav">
+            <div class="nav-item text-nowrap">
+                <a class="nav-link px-3" href="#">Sair</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="container-fluid">
+        <div class="row">
+            <nav id="sidebar-container" class="col-md-3 col-lg-2 d-md-block sidebar collapse">
+                <!-- Sidebar será carregado aqui via JavaScript -->
+            </nav>
+
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                    <h1 class="h2">Cadastro de Territórios</h1>
+                    <div class="btn-toolbar mb-2 mb-md-0">
+                        <div class="btn-group me-2">
+                            <button type="button" class="btn btn-sm btn-outline-secondary" id="btn-importar-territorio">
+                                <i class="fas fa-file-import"></i> Importar
+                            </button>
+                            <button type="button" class="btn btn-sm btn-outline-secondary" id="btn-exportar-territorio">
+                                <i class="fas fa-file-export"></i> Exportar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="alert alert-primary alert-dismissible fade show" role="alert" id="dica-cadastro">
+                    <i class="fas fa-info-circle me-2"></i> <strong>Dica:</strong> Primeiro cadastre o território, depois adicione as ruas e por fim os imóveis em cada rua.
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
+                </div>
+
+                <!-- Card para adicionar novo território -->
+                <div class="card mb-4">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0"><i class="fas fa-plus-circle me-2"></i>Adicionar Novo Território</h5>
+                    </div>
+                    <div class="card-body">
+                        <form id="form-territorio" class="row g-3">
+                            <div class="col-md-6">
+                                <label for="territorio-nome" class="form-label">Nome ou Número do Território:</label>
+                                <input type="text" class="form-control" id="territorio-nome" placeholder="Ex: Quadra 12 ou Setor Norte Quadra 5" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="territorio-descricao" class="form-label">Descrição (opcional):</label>
+                                <input type="text" class="form-control" id="territorio-descricao" placeholder="Ex: Região residencial com comércios">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="territorio-regiao" class="form-label">Região:</label>
+                                <select class="form-select" id="territorio-regiao">
+                                    <option value="">Selecione a região</option>
+                                    <option value="norte">Zona Norte</option>
+                                    <option value="sul">Zona Sul</option>
+                                    <option value="leste">Zona Leste</option>
+                                    <option value="oeste">Zona Oeste</option>
+                                    <option value="centro">Centro</option>
+                                    <option value="outra">Outra</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="territorio-observacoes" class="form-label">Observações (opcional):</label>
+                                <input type="text" class="form-control" id="territorio-observacoes" placeholder="Ex: Acesso restrito aos domingos">
+                            </div>
+                            <div class="col-12">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-save me-1"></i> Adicionar Território
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Loading -->
+                <div class="text-center my-5 d-none" id="loading">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Carregando...</span>
+                    </div>
+                    <p class="mt-2">Carregando territórios...</p>
+                </div>
+
+                <!-- Alerta de sem dados -->
+                <div class="alert alert-info d-none" id="sem-dados">
+                    <i class="fas fa-info-circle me-2"></i> Nenhum território cadastrado. Adicione um novo território usando o formulário acima.
+                </div>
+
+                <!-- Lista de territórios -->
+                <div class="accordion" id="territorios-accordion">
+                    <!-- Os territórios serão adicionados aqui dinamicamente -->
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Modal para adicionar rua -->
+    <div class="modal fade" id="modal-rua" tabindex="-1" aria-labelledby="modal-rua-label" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modal-rua-label">Adicionar Rua</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="territorio-id-rua">
+                    <form id="form-rua">
+                        <div class="mb-3">
+                            <label for="rua-nome" class="form-label">Nome da Rua:</label>
+                            <input type="text" class="form-control" id="rua-nome" placeholder="Ex: Rua das Flores" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="rua-tipo" class="form-label">Tipo:</label>
+                            <select class="form-select" id="rua-tipo">
+                                <option value="rua">Rua</option>
+                                <option value="avenida">Avenida</option>
+                                <option value="travessa">Travessa</option>
+                                <option value="alameda">Alameda</option>
+                                <option value="viela">Viela</option>
+                                <option value="outro">Outro</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="rua-observacoes" class="form-label">Observações (opcional):</label>
+                            <textarea class="form-control" id="rua-observacoes" rows="2"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" id="btn-salvar-rua">Adicionar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para adicionar imóvel -->
+    <div class="modal fade" id="modal-imovel" tabindex="-1" aria-labelledby="modal-imovel-label" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modal-imovel-label">Adicionar Imóvel</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="rua-id-imovel">
+                    <form id="form-imovel">
+                        <div class="mb-3">
+                            <label for="imovel-numero" class="form-label">Número:</label>
+                            <input type="text" class="form-control" id="imovel-numero" placeholder="Ex: 123" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="imovel-tipo" class="form-label">Tipo:</label>
+                            <select class="form-select" id="imovel-tipo" required>
+                                <option value="residencial">Residencial</option>
+                                <option value="comercial">Comercial</option>
+                                <option value="predio">Prédio</option>
+                                <option value="vila">Vila</option>
+                                <option value="terreno">Terreno</option>
+                                <option value="outro">Outro</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="imovel-complemento" class="form-label">Complemento (opcional):</label>
+                            <input type="text" class="form-control" id="imovel-complemento" placeholder="Ex: Apto 101, Loja 3">
+                        </div>
+                        <div class="mb-3">
+                            <label for="imovel-observacoes" class="form-label">Observações (opcional):</label>
+                            <textarea class="form-control" id="imovel-observacoes" rows="2"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" id="btn-salvar-imovel">Adicionar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de confirmação para remover território -->
+    <div class="modal fade" id="modal-confirmar-remover" tabindex="-1" aria-labelledby="modal-confirmar-remover-label" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title" id="modal-confirmar-remover-label"><i class="fas fa-exclamation-triangle me-2"></i>Confirmar Remoção</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="remover-id">
+                    <input type="hidden" id="remover-tipo">
+                    <p id="remover-mensagem">Tem certeza que deseja remover este item? Esta ação não pode ser desfeita.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-danger" id="btn-confirmar-remover">Remover</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para importar/exportar territórios -->
+    <div class="modal fade" id="modal-importar-exportar" tabindex="-1" aria-labelledby="modal-importar-exportar-label" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modal-importar-exportar-label">Importar/Exportar Territórios</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                </div>
+                <div class="modal-body">
+                    <ul class="nav nav-tabs" id="importExportTab" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="import-tab" data-bs-toggle="tab" data-bs-target="#import-tab-pane" type="button" role="tab" aria-controls="import-tab-pane" aria-selected="true">Importar</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="export-tab" data-bs-toggle="tab" data-bs-target="#export-tab-pane" type="button" role="tab" aria-controls="export-tab-pane" aria-selected="false">Exportar</button>
+                        </li>
+                    </ul>
+                    <div class="tab-content" id="importExportTabContent">
+                        <div class="tab-pane fade show active" id="import-tab-pane" role="tabpanel" aria-labelledby="import-tab" tabindex="0">
+                            <div class="p-3">
+                                <div class="mb-3">
+                                    <label for="importar-arquivo" class="form-label">Selecione o arquivo JSON:</label>
+                                    <input class="form-control" type="file" id="importar-arquivo" accept=".json">
+                                </div>
+                                <div class="mb-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="importar-substituir">
+                                        <label class="form-check-label" for="importar-substituir">
+                                            Substituir territórios existentes
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="alert alert-warning">
+                                    <i class="fas fa-exclamation-triangle me-2"></i> Atenção: Se você optar por substituir os territórios existentes, todos os dados atuais serão perdidos.
+                                </div>
+                                <button class="btn btn-primary" id="btn-realizar-importacao">Importar Dados</button>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="export-tab-pane" role="tabpanel" aria-labelledby="export-tab" tabindex="0">
+                            <div class="p-3">
+                                <div class="mb-3">
+                                    <label class="form-label">Escolha os territórios para exportar:</label>
+                                    <div id="lista-territorios-exportar" class="list-group">
+                                        <!-- Lista de territórios será adicionada aqui -->
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="exportar-todos" checked>
+                                        <label class="form-check-label" for="exportar-todos">
+                                            Selecionar todos
+                                        </label>
+                                    </div>
+                                </div>
+                                <button class="btn btn-primary" id="btn-realizar-exportacao">Exportar Dados</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript comum -->
+    <script src="/assets/js/common.js"></script>
+    <script src="/assets/js/data.js"></script>
+    <script src="/assets/js/components.js"></script>
+    <script src="/assets/js/notifications.js"></script>
+    <!-- Frameworks externos via CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+    <!-- JavaScript específico da página -->
+    <script src="/modules/territorios/js/cadastro.js"></script>
+
+    <script>
+        // Inicializar a página
+        document.addEventListener('DOMContentLoaded', initPage);
+    </script>
+</body>
+</html>

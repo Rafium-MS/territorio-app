@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Sistema de Territórios</title>
+    <!-- CSS comum -->
+    <link href="/assets/css/main.css" rel="stylesheet">
+    <link href="/assets/css/styles.css" rel="stylesheet">
+    <!-- CSS específico da página -->
+    <link href="/modules/territorios/css/dashboard.css" rel="stylesheet">
+    <!-- Frameworks externos via CDN -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <header class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0 shadow">
+        <a class="navbar-brand col-md-3 col-lg-2 me-0 px-3" href="#">Sistema de Territórios</a>
+        <button class="navbar-toggler position-absolute d-md-none collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="w-100"></div>
+        <div class="navbar-nav">
+            <div class="nav-item text-nowrap">
+                <a class="nav-link px-3" href="#">Sair</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="container-fluid">
+        <div class="row">
+            <nav id="sidebar-container" class="col-md-3 col-lg-2 d-md-block sidebar collapse">
+                <!-- Sidebar será carregado aqui via JavaScript -->
+            </nav>
+
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                    <h1 class="h2">Dashboard</h1>
+                    <div class="btn-toolbar mb-2 mb-md-0">
+                        <div class="btn-group me-2">
+                            <button type="button" class="btn btn-sm btn-outline-secondary">Compartilhar</button>
+                            <button type="button" class="btn btn-sm btn-outline-secondary">Exportar</button>
+                        </div>
+                        <button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle">
+                            <i class="fas fa-calendar"></i> Esta semana
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Estatísticas Rápidas -->
+                <div class="row mb-4">
+                    <div class="col-md-4 mb-4">
+                        <div class="card card-dashboard h-100 bg-primary-light">
+                            <div class="card-body text-center">
+                                <div class="card-icon bg-primary">
+                                    <i class="fas fa-map-marked-alt"></i>
+                                </div>
+                                <h5 class="card-title">Total de Territórios</h5>
+                                <p class="card-text stat-value">5</p>
+                                <div class="progress progress-thin">
+                                    <div class="progress-bar bg-primary" role="progressbar" style="width: 100%" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-4">
+                        <div class="card card-dashboard h-100 bg-success-light">
+                            <div class="card-body text-center">
+                                <div class="card-icon bg-success">
+                                    <i class="fas fa-house-user"></i>
+                                </div>
+                                <h5 class="card-title">Imóveis Atendidos</h5>
+                                <p class="card-text stat-value">27/45</p>
+                                <div class="progress progress-thin">
+                                    <div class="progress-bar bg-success" role="progressbar" style="width: 60%" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-4">
+                        <div class="card card-dashboard h-100 bg-warning-light">
+                            <div class="card-body text-center">
+                                <div class="card-icon bg-warning">
+                                    <i class="fas fa-tasks"></i>
+                                </div>
+                                <h5 class="card-title">Designações Ativas</h5>
+                                <p class="card-text stat-value">3</p>
+                                <div class="progress progress-thin">
+                                    <div class="progress-bar bg-warning" role="progressbar" style="width: 75%" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <!-- Gráfico de Atendimentos -->
+                    <div class="col-lg-8 mb-4">
+                        <div class="card card-dashboard h-100">
+                            <div class="card-header bg-white">
+                                <h5 class="mb-0">Progresso de Atendimentos por Território</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="chart-container">
+                                    <canvas id="atendimentosChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Território do Dia -->
+                    <div class="col-lg-4 mb-4">
+                        <div class="card card-dashboard h-100">
+                            <div class="card-header bg-info text-white">
+                                <h5 class="mb-0">Território do Dia</h5>
+                            </div>
+                            <div class="card-body">
+                                <h5 id="territorio-hoje">Território 5</h5>
+                                <p class="text-muted">Zona Sul - Residencial</p>
+                                
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <span>Saída de Campo:</span>
+                                    <span class="badge bg-info">Saída 3</span>
+                                </div>
+                                
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <span>Total de Ruas:</span>
+                                    <span class="badge bg-secondary">12</span>
+                                </div>
+                                
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <span>Designado em:</span>
+                                    <span>20/03/2025</span>
+                                </div>
+                                
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <span>Devolução:</span>
+                                    <span>05/04/2025</span>
+                                </div>
+                                
+                                <a href="territorio-dia.html" class="btn btn-info btn-sm w-100 text-white">Ver Detalhes</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <!-- Últimas Designações -->
+                    <div class="col-lg-6 mb-4">
+                        <div class="card card-dashboard h-100">
+                            <div class="card-header bg-white">
+                                <h5 class="mb-0">Últimas Designações</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>Território</th>
+                                                <th>Saída</th>
+                                                <th>Designação</th>
+                                                <th>Status</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>Território 5</td>
+                                                <td>Saída 3</td>
+                                                <td>20/03/2025</td>
+                                                <td><span class="badge bg-success">Ativo</span></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Território 3</td>
+                                                <td>Saída 2</td>
+                                                <td>15/03/2025</td>
+                                                <td><span class="badge bg-success">Ativo</span></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Território 1</td>
+                                                <td>Saída 1</td>
+                                                <td>18/03/2025</td>
+                                                <td><span class="badge bg-success">Ativo</span></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Território 4</td>
+                                                <td>Saída 2</td>
+                                                <td>10/02/2025</td>
+                                                <td><span class="badge bg-secondary">Concluído</span></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Território 2</td>
+                                                <td>Saída 1</td>
+                                                <td>05/02/2025</td>
+                                                <td><span class="badge bg-secondary">Concluído</span></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="card-footer bg-white text-end">
+                                <a href="designar.html" class="btn btn-sm btn-outline-primary">Ver Todas</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Próximas Saídas -->
+                    <div class="col-lg-6 mb-4">
+                        <div class="card card-dashboard h-100">
+                            <div class="card-header bg-white">
+                                <h5 class="mb-0">Próximas Saídas de Campo</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>Nome</th>
+                                                <th>Data</th>
+                                                <th>Dia</th>
+                                                <th>Horário</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>Saída 1</td>
+                                                <td>25/03/2025</td>
+                                                <td>Terça-feira</td>
+                                                <td>09:00</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Saída 2</td>
+                                                <td>26/03/2025</td>
+                                                <td>Quarta-feira</td>
+                                                <td>19:30</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Saída 3</td>
+                                                <td>28/03/2025</td>
+                                                <td>Sexta-feira</td>
+                                                <td>14:00</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Saída 1</td>
+                                                <td>01/04/2025</td>
+                                                <td>Terça-feira</td>
+                                                <td>09:00</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Saída 2</td>
+                                                <td>02/04/2025</td>
+                                                <td>Quarta-feira</td>
+                                                <td>19:30</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="card-footer bg-white text-end">
+                                <a href="saidas.html" class="btn btn-sm btn-outline-primary">Ver Todas</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <!-- Estatísticas de Atendimentos -->
+                    <div class="col-lg-4 mb-4">
+                        <div class="card card-dashboard h-100">
+                            <div class="card-header bg-white">
+                                <h5 class="mb-0">Tipo de Imóveis</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="chart-container">
+                                    <canvas id="tiposImoveisChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Atendimentos por Semana -->
+                    <div class="col-lg-4 mb-4">
+                        <div class="card card-dashboard h-100">
+                            <div class="card-header bg-white">
+                                <h5 class="mb-0">Atendimentos por Semana</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="chart-container">
+                                    <canvas id="atendimentosSemanaChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Lembretes e Avisos -->
+                    <div class="col-lg-4 mb-4">
+                        <div class="card card-dashboard h-100">
+                            <div class="card-header bg-danger text-white">
+                                <h5 class="mb-0">Lembretes e Avisos</h5>
+                            </div>
+                            <div class="card-body">
+                                <ul class="list-group list-group-flush">
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <span class="badge bg-warning text-dark me-2">Amanhã</span>
+                                            Saída de Campo - Saída 1
+                                        </div>
+                                        <span class="badge bg-primary rounded-pill">09:00</span>
+                                    </li>
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <span class="badge bg-danger me-2">Urgente</span>
+                                            Devolução do Território 3
+                                        </div>
+                                        <span class="badge bg-secondary rounded-pill">30/03</span>
+                                    </li>
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <span class="badge bg-info text-white me-2">Info</span>
+                                            Relatório Mensal
+                                        </div>
+                                        <span class="badge bg-secondary rounded-pill">31/03</span>
+                                    </li>
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <span class="badge bg-warning text-dark me-2">Pendente</span>
+                                            Atualizar Prédio Vila Aurora
+                                        </div>
+                                        <span class="badge bg-secondary rounded-pill">-</span>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="card-footer bg-white text-end">
+                                <button class="btn btn-sm btn-outline-primary">Adicionar Lembrete</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- JavaScript comum -->
+    <script src="/assets/js/common.js"></script>
+    <script src="/assets/js/data.js"></script>
+    <script src="/assets/js/components.js"></script>
+    <!-- Frameworks externos via CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <!-- JavaScript específico da página -->
+    <script src="/modules/territorios/js/dashboard.js"></script>
+
+    <script>
+        // Inicializar a página
+        document.addEventListener('DOMContentLoaded', initPage);
+    </script>
+</body>
+</html>

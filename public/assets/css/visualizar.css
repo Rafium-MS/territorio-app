@@ -1,0 +1,203 @@
+/* Estilos para a página de visualização de territórios */
+
+.territory-header {
+    background-color: #f8f9fa;
+    padding: 15px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+    border-left: 4px solid #007bff;
+}
+
+.territory-stats {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+}
+
+.stat-card {
+    flex: 1;
+    min-width: 200px;
+    background-color: #fff;
+    border-radius: 5px;
+    padding: 15px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    text-align: center;
+}
+
+.stat-card .stat-value {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #007bff;
+}
+
+.stat-card .stat-label {
+    color: #6c757d;
+    font-size: 0.9rem;
+}
+
+/* Estilos para cartões de ruas */
+.street-card {
+    background-color: #fff;
+    border-radius: 5px;
+    border: 1px solid #dee2e6;
+    margin-bottom: 20px;
+    overflow: hidden;
+}
+
+.street-header {
+    background-color: #e9ecef;
+    padding: 10px 15px;
+    border-bottom: 1px solid #dee2e6;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.street-name {
+    font-weight: bold;
+    margin: 0;
+}
+
+.street-badge {
+    font-size: 0.75rem;
+    background-color: #6c757d;
+    color: white;
+    padding: 3px 8px;
+    border-radius: 10px;
+}
+
+.street-body {
+    padding: 15px;
+}
+
+/* Estilos para cartões de imóveis */
+.property-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 10px;
+}
+
+.property-card {
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 5px;
+    padding: 10px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+}
+
+.property-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.property-card.attended {
+    background-color: #d4edda;
+    border-color: #c3e6cb;
+}
+
+.property-card.attended::after {
+    content: "✓";
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    color: #28a745;
+    font-weight: bold;
+}
+
+.property-card .property-number {
+    font-weight: bold;
+    font-size: 1.1rem;
+    margin-bottom: 5px;
+}
+
+.property-card .property-type {
+    display: inline-block;
+    font-size: 0.75rem;
+    background-color: #007bff;
+    color: white;
+    padding: 2px 6px;
+    border-radius: 10px;
+    margin-bottom: 5px;
+}
+
+.property-card .property-type.residential {
+    background-color: #28a745;
+}
+
+.property-card .property-type.commercial {
+    background-color: #007bff;
+}
+
+.property-card .property-type.building {
+    background-color: #6f42c1;
+}
+
+.property-card .property-type.villa {
+    background-color: #fd7e14;
+}
+
+.property-card .attendance-date {
+    font-size: 0.8rem;
+    color: #28a745;
+    margin-top: 5px;
+}
+
+/* Estilos para filtros */
+.filter-container {
+    background-color: #f8f9fa;
+    padding: 15px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+}
+
+.filter-title {
+    font-size: 1rem;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.filter-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.filter-item {
+    display: flex;
+    align-items: center;
+}
+
+/* Estilos para o modal de atendimento */
+.attendance-form-section {
+    margin-bottom: 15px;
+}
+
+.attendance-form-section label {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.attendance-form-section .form-text {
+    font-size: 0.8rem;
+    color: #6c757d;
+}
+
+/* Estilos para barra de progresso */
+.progress-container {
+    margin: 20px 0;
+}
+
+.progress-label {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 5px;
+}
+
+.progress {
+    height: 10px;
+    border-radius: 5px;
+    overflow: hidden;
+}

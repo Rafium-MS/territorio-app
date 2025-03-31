@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Título da Página - Sistema de Territórios</title>
+    <!-- CSS comum -->
+    <link href="/assets/css/main.css" rel="stylesheet">
+    <!-- CSS específico da página -->
+    <link href="/modules/territorios/css/cadastro.css" rel="stylesheet">
+    <!-- Frameworks externos via CDN -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <header class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0 shadow">
+        <!-- Conteúdo do header -->
+    </header>
+
+    <div class="container-fluid">
+        <div class="row">
+            <nav id="sidebar-container" class="col-md-3 col-lg-2 d-md-block sidebar collapse">
+                <!-- Sidebar será carregado aqui via JavaScript -->
+            </nav>
+
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+                <div class="container mt-4 mb-5">
+                    <h1 class="text-center mb-4">Cadastro de Prédios e Vilas</h1>
+                    
+                    <div class="filtros">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="filtro-predios" checked>
+                                    <label class="form-check-label" for="filtro-predios">Mostrar Prédios</label>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="filtro-vilas" checked>
+                                    <label class="form-check-label" for="filtro-vilas">Mostrar Vilas</label>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="filtro-concluidos">
+                                    <label class="form-check-label" for="filtro-concluidos">Apenas Não Concluídos</label>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="filtro-designados">
+                                    <label class="form-check-label" for="filtro-designados">Apenas Designados</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+            
+                    <ul class="nav nav-tabs" id="myTab" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="lista-tab" data-bs-toggle="tab" data-bs-target="#lista" type="button" role="tab" aria-controls="lista" aria-selected="true">
+                                <i class="fas fa-list"></i> Lista de Prédios e Vilas
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="cadastro-tab" data-bs-toggle="tab" data-bs-target="#cadastro" type="button" role="tab" aria-controls="cadastro" aria-selected="false">
+                                <i class="fas fa-plus-circle"></i> Novo Cadastro
+                            </button>
+                        </li>
+                    </ul>
+                    
+                    <div class="tab-content" id="myTabContent">
+                        <!-- Aba de Lista -->
+                        <div class="tab-pane fade show active" id="lista" role="tabpanel" aria-labelledby="lista-tab">
+                            <div class="text-center my-5" id="loading">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="visually-hidden">Carregando...</span>
+                                </div>
+                                <p class="mt-2">Carregando prédios e vilas...</p>
+                            </div>
+                            
+                            <div class="alert alert-info d-none" id="sem-dados">
+                                Nenhum prédio ou vila encontrado. Por favor, cadastre novos prédios/vilas ou verifique os territórios existentes.
+                            </div>
+                            
+                            <div id="lista-imoveis" class="row">
+                                <!-- Os cards serão adicionados aqui dinamicamente -->
+                            </div>
+                        </div>
+                        
+                        <!-- Aba de Cadastro -->
+                        <div class="tab-pane fade" id="cadastro" role="tabpanel" aria-labelledby="cadastro-tab">
+                            <div class="card mt-3">
+                                <div class="card-header bg-primary text-white">
+                                    <h5 class="mb-0">Adicionar Novo Prédio/Vila</h5>
+                                </div>
+                                <div class="card-body">
+                                    <form id="form-cadastro">
+                                        <div class="row mb-3">
+                                            <div class="col-md-6">
+                                                <label for="select-territorio" class="form-label">Selecione o Território:</label>
+                                                <select class="form-select" id="select-territorio" required>
+                                                    <option value="">Selecionar...</option>
+                                                    <!-- Opções serão adicionadas dinamicamente -->
+                                                </select>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label for="select-rua" class="form-label">Selecione a Rua:</label>
+                                                <select class="form-select" id="select-rua" required disabled>
+                                                    <option value="">Selecione primeiro o território</option>
+                                                    <!-- Opções serão adicionadas dinamicamente -->
+                                                </select>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="row mb-3">
+                                            <div class="col-md-4">
+                                                <label for="numero" class="form-label">Número:</label>
+                                                <input type="text" class="form-control" id="numero" required>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <label for="tipo" class="form-label">Tipo:</label>
+                                                <select class="form-select" id="tipo" required>
+                                                    <option value="">Selecionar...</option>
+                                                    <option value="predio">Prédio</option>
+                                                    <option value="vila">Vila</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <label for="nome" class="form-label">Nome (opcional):</label>
+                                                <input type="text" class="form-control" id="nome" placeholder="Ex: Edifício Primavera">
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="row mb-3">
+                                            <div class="col-md-4">
+                                                <label for="total-unidades" class="form-label">Total de Unidades:</label>
+                                                <input type="number" class="form-control" id="total-unidades" required min="1">
+                                            </div>
+                                            <div class="col-md-4">
+                                                <label for="tipo-portaria" class="form-label">Tipo de Portaria:</label>
+                                                <select class="form-select" id="tipo-portaria" required>
+                                                    <option value="">Selecionar...</option>
+                                                    <option value="24h">24 horas</option>
+                                                    <option value="eletronica">Eletrônica</option>
+                                                    <option value="diurna">Apenas Diurna</option>
+                                                    <option value="sem">Sem Portaria</option>
+                                                    <option value="outro">Outro</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <label for="acesso" class="form-label">Tipo de Acesso:</label>
+                                                <select class="form-select" id="acesso" required>
+                                                    <option value="">Selecionar...</option>
+                                                    <option value="facil">Fácil (Sem Restrições)</option>
+                                                    <option value="restrito">Restrito (Com Autorização)</option>
+                                                    <option value="interfone">Via Interfone</option>
+                                                    <option value="dificil">Difícil</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="mb-3">
+                                            <label for="observacoes" class="form-label">Observações:</label>
+                                            <textarea class="form-control" id="observacoes" rows="3"></textarea>
+                                        </div>
+                                        
+                                        <div class="d-grid">
+                                            <button type="submit" class="btn btn-success">Cadastrar</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            
+                <!-- Modal para Detalhes do Prédio ou Vila -->
+                <div class="modal fade" id="modal-detalhes" tabindex="-1" aria-labelledby="modal-detalhes-label" aria-hidden="true">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header" id="modal-header">
+                                <h5 class="modal-title" id="modal-detalhes-label">Detalhes do Prédio</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                            </div>
+                            <div class="modal-body">
+                                <!-- Dados básicos -->
+                                <div class="row mb-4">
+                                    <div class="col-md-6">
+                                        <h6 class="text-muted">Localização</h6>
+                                        <p id="detalhe-localizacao">Rua das Flores, 123</p>
+                                        
+                                        <h6 class="text-muted mt-3">Portaria</h6>
+                                        <p id="detalhe-portaria">24 horas</p>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <h6 class="text-muted">Total de Unidades</h6>
+                                        <p id="detalhe-unidades">24 apartamentos</p>
+                                        
+                                        <h6 class="text-muted mt-3">Acesso</h6>
+                                        <p id="detalhe-acesso">Fácil (Sem Restrições)</p>
+                                    </div>
+                                </div>
+                                
+                                <!-- Abas -->
+                                <ul class="nav nav-tabs" id="detalhesTab" role="tablist">
+                                    <li class="nav-item" role="presentation">
+                                        <button class="nav-link active" id="unidades-tab" data-bs-toggle="tab" data-bs-target="#unidades" type="button" role="tab" aria-controls="unidades" aria-selected="true">Unidades</button>
+                                    </li>
+                                    <li class="nav-item" role="presentation">
+                                        <button class="nav-link" id="historico-tab" data-bs-toggle="tab" data-bs-target="#historico" type="button" role="tab" aria-controls="historico" aria-selected="false">Histórico</button>
+                                    </li>
+                                    <li class="nav-item" role="presentation">
+                                        <button class="nav-link" id="designacao-tab" data-bs-toggle="tab" data-bs-target="#designacao" type="button" role="tab" aria-controls="designacao" aria-selected="false">Designação</button>
+                                    </li>
+                                </ul>
+                                
+                                <div class="tab-content" id="detalhesTabContent">
+                                    <!-- Aba de Unidades -->
+                                    <div class="tab-pane fade show active" id="unidades" role="tabpanel" aria-labelledby="unidades-tab">
+                                        <div class="mb-3 mt-3">
+                                            <label for="input-busca-apto" class="form-label">Buscar Unidade:</label>
+                                            <input type="text" class="form-control" id="input-busca-apto" placeholder="Digite o número...">
+                                        </div>
+                                        
+                                        <div class="apt-grid" id="grid-apartamentos">
+                                            <!-- Unidades serão adicionadas aqui -->
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Aba de Histórico -->
+                                    <div class="tab-pane fade" id="historico" role="tabpanel" aria-labelledby="historico-tab">
+                                        <div class="d-flex justify-content-between align-items-center mt-3 mb-3">
+                                            <h6>Registros de Trabalho</h6>
+                                            <button class="btn btn-sm btn-outline-primary" id="btn-adicionar-registro">
+                                                <i class="fas fa-plus"></i> Novo Registro
+                                            </button>
+                                        </div>
+                                        
+                                        <div id="form-novo-registro" class="card mb-3 d-none">
+                                            <div class="card-body">
+                                                <form id="form-registro">
+                                                    <div class="mb-3">
+                                                        <label for="registro-data" class="form-label">Data:</label>
+                                                        <input type="date" class="form-control" id="registro-data" required>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label for="registro-descricao" class="form-label">Descrição:</label>
+                                                        <textarea class="form-control" id="registro-descricao" rows="2" required></textarea>
+                                                    </div>
+                                                    <div class="d-flex justify-content-end">
+                                                        <button type="button" class="btn btn-sm btn-secondary me-2" id="btn-cancelar-registro">Cancelar</button>
+                                                        <button type="submit" class="btn btn-sm btn-success">Salvar Registro</button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="timeline" id="timeline-historico">
+                                            <!-- Registros do histórico serão adicionados aqui -->
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Aba de Designação -->
+                                    <div class="tab-pane fade" id="designacao" role="tabpanel" aria-labelledby="designacao-tab">
+                                        <div class="mt-3">
+                                            <div class="alert alert-info" id="alerta-sem-designacao">
+                                                Este prédio/vila ainda não foi designado. Preencha o formulário abaixo para designar.
+                                            </div>
+                                            
+                                            <div id="info-designacao" class="d-none">
+                                                <div class="card mb-3">
+                                                    <div class="card-body">
+                                                        <div class="row">
+                                                            <div class="col-md-6">
+                                                                <h6 class="text-muted">Responsável</h6>
+                                                                <p id="detalhe-responsavel">João Silva</p>
+                                                            </div>
+                                                            <div class="col-md-6">
+                                                                <h6 class="text-muted">Saída de Campo</h6>
+                                                                <p id="detalhe-saida">Saída 3</p>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-md-6">
+                                                                <h6 class="text-muted">Data de Designação</h6>
+                                                                <p id="detalhe-data-designacao">20/03/2025</p>
+                                                            </div>
+                                                            <div class="col-md-6">
+                                                                <h6 class="text-muted">Data de Devolução</h6>
+                                                                <p id="detalhe-data-devolucao">20/04/2025</p>
+                                                            </div>
+                                                        </div>
+                                                        <div class="d-flex justify-content-end">
+                                                            <button class="btn btn-sm btn-outline-danger" id="btn-encerrar-designacao">
+                                                                <i class="fas fa-times-circle"></i> Encerrar Designação
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+                                            <div id="form-designacao">
+                                                <h6 class="mb-3">Designar Prédio/Vila</h6>
+                                                <form id="form-designar">
+                                                    <div class="row mb-3">
+                                                        <div class="col-md-6">
+                                                            <label for="designacao-responsavel" class="form-label">Responsável:</label>
+                                                            <input type="text" class="form-control" id="designacao-responsavel" required>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <label for="designacao-saida" class="form-label">Saída de Campo:</label>
+                                                            <select class="form-select" id="designacao-saida" required>
+                                                                <option value="">Selecionar...</option>
+                                                                <!-- Opções serão adicionadas dinamicamente -->
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row mb-3">
+                                                        <div class="col-md-6">
+                                                            <label for="designacao-data" class="form-label">Data de Designação:</label>
+                                                            <input type="date" class="form-control" id="designacao-data" required>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <label for="designacao-devolucao" class="form-label">Data Prevista para Devolução:</label>
+                                                            <input type="date" class="form-control" id="designacao-devolucao">
+                                                        </div>
+                                                    </div>
+                                                    <div class="d-grid">
+                                                        <button type="submit" class="btn btn-primary">Designar</button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            
+                <!-- Modal para Atendimento de Unidade -->
+                <div class="modal fade" id="modal-atendimento" tabindex="-1" aria-labelledby="modal-atendimento-label" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="modal-atendimento-label">Registrar Atendimento</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                            </div>
+                            <div class="modal-body">
+                                <form id="form-atendimento">
+                                    <input type="hidden" id="atendimento-predio-id">
+                                    <input type="hidden" id="atendimento-unidade">
+                                    
+                                    <div class="mb-3">
+                                        <p id="atendimento-info">Registrar atendimento para:</p>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <label for="atendimento-data" class="form-label">Data do Atendimento:</label>
+                                        <input type="date" class="form-control" id="atendimento-data" required>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <label for="atendimento-resultado" class="form-label">Resultado:</label>
+                                        <select class="form-select" id="atendimento-resultado" required>
+                                            <option value="">Selecionar...</option>
+                                            <option value="positivo">Positivo</option>
+                                            <option value="ocupante-ausente">Ocupante Ausente</option>
+                                            <option value="recusou">Recusou Atendimento</option>
+                                            <option value="visitado">Apenas Visitado</option>
+                                        </select>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <label for="atendimento-observacoes" class="form-label">Observações:</label>
+                                        <textarea class="form-control" id="atendimento-observacoes" rows="2"></textarea>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                <button type="button" class="btn btn-danger d-none" id="btn-remover-atendimento">Remover Atendimento</button>
+                                <button type="button" class="btn btn-success" id="btn-confirmar-atendimento">Confirmar Atendimento</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                        </main>
+        </div>
+    </div>
+
+    <!-- JavaScript comum -->
+    <script src="/assets/js/common.js"></script>
+    <script src="/assets/js/data.js"></script>
+    <!-- JavaScript específico da página -->
+    <script src="/modules/territorios/js/cadastro.js"></script>
+    <!-- Frameworks externos via CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // Inicializar a página
+        document.addEventListener('DOMContentLoaded', initPage);
+    </script>
+</body>
+</html>
