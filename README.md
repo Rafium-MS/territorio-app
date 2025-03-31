@@ -156,8 +156,8 @@ Este projeto está licenciado sob a licença MIT - veja o arquivo [LICENSE](LICE
 
 Rafael Silvério Santos - [silveriorafaelsantos@gmail.com](mailto:silveriorafaelsantos@gmail.com)
 
-Link do Projeto: [https://github.com/Rafio-silverio/territorio-app](https://github.com/Rafio-silverio/territorio-app)
+Link do Projeto: [https://github.com/Rafium-MS/territorio-app](https://github.com/Rafium-MS/territorio-app)
 
 ---
 
-⭐️ De [Rafio-silver](https://github.com/Rafio-silver)
+⭐️ De [Rafium-MS](https://github.com/Rafium-MS)
