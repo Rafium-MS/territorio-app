@@ -30,7 +30,7 @@ Uma aplicação web para gerenciar territórios, controlar atividades de campo, 
 
 1. Clone o repositório:
    ```bash
-   git clone https://github.com/seu-usuario/territorio-app.git
+   git clone https://github.com/Raf-nb/territorio-app.git
    cd territorio-app
    ```
 
