@@ -84,6 +84,6 @@ Este projeto está licenciado sob a licença MIT - veja o arquivo [LICENSE](LICE
 
 ## Contato
 
-Seu Nome - [silveriorafaelsantos@gmail.com](mailto:silveriorafaelsantos@gmail.com)
+Rafael Silvério - [silveriorafaelsantos@gmail.com](mailto:silveriorafaelsantos@gmail.com)
 
 Link do Projeto: [https://github.com/Raf-nb/territorio-app](https://github.com/Raf-nb/territorio-app)
