@@ -84,6 +84,6 @@ Este projeto está licenciado sob a licença MIT - veja o arquivo [LICENSE](LICE
 
 ## Contato
 
-Seu Nome - [seu-email@exemplo.com](mailto:seu-email@exemplo.com)
+Seu Nome - [seu-email@exemplo.com](mailto:silveriorafaelsantos@gmail.com)
 
-Link do Projeto: [https://github.com/seu-usuario/territorio-app](https://github.com/seu-usuario/territorio-app)
+Link do Projeto: [https://github.com/seu-usuario/territorio-app](https://github.com/Raf-nb/territorio-app)
