@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Designação de Territórios - Sistema de Territórios</title>
+    <!-- CSS comum -->
+    <link href="/assets/css/main.css" rel="stylesheet">
+    <link href="/assets/css/styles.css" rel="stylesheet">
+    <!-- CSS específico da página -->
+    <link href="/modules/territorios/css/designar.css" rel="stylesheet">
+    <!-- Frameworks externos via CDN -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <header class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0 shadow">
+        <a class="navbar-brand col-md-3 col-lg-2 me-0 px-3" href="#">Sistema de Territórios</a>
+        <button class="navbar-toggler position-absolute d-md-none collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="w-100"></div>
+        <div class="navbar-nav">
+            <div class="nav-item text-nowrap">
+                <a class="nav-link px-3" href="#">Sair</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="container-fluid">
+        <div class="row">
+            <nav id="sidebar-container" class="col-md-3 col-lg-2 d-md-block sidebar collapse">
+                <!-- Sidebar será carregado aqui via JavaScript -->
+            </nav>
+
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                    <h1 class="h2">Designação de Territórios</h1>
+                    <div class="btn-toolbar mb-2 mb-md-0">
+                        <div class="btn-group me-2">
+                            <button type="button" class="btn btn-sm btn-outline-secondary" id="btn-exportar">
+                                <i class="fas fa-file-export"></i> Exportar
+                            </button>
+                            <button type="button" class="btn btn-sm btn-outline-primary" id="btn-calendario-view">
+                                <i class="fas fa-calendar-alt"></i> Ver Calendário
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Formulário de Nova Designação -->
+                <div class="card mb-4">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0"><i class="fas fa-plus-circle me-2"></i>Nova Designação</h5>
+                    </div>
+                    <div class="card-body">
+                        <form id="form-designacao" class="row g-3">
+                            <div class="col-md-6">
+                                <label for="territorio" class="form-label">Território:</label>
+                                <select class="form-select" id="territorio" required>
+                                    <option value="">Selecione um território</option>
+                                    <!-- Opções serão adicionadas via JavaScript -->
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="saida-campo" class="form-label">Saída de Campo:</label>
+                                <select class="form-select" id="saida-campo" required>
+                                    <option value="">Selecione uma saída de campo</option>
+                                    <!-- Opções serão adicionadas via JavaScript -->
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="responsavel" class="form-label">Responsável:</label>
+                                <input type="text" class="form-control" id="responsavel" required>
+                            </div>
+                            <div class="col-md-3">
+                                <label for="data-designacao" class="form-label">Data de Designação:</label>
+                                <input type="date" class="form-control" id="data-designacao" required>
+                            </div>
+                            <div class="col-md-3">
+                                <label for="data-devolucao" class="form-label">Data de Devolução:</label>
+                                <input type="date" class="form-control" id="data-devolucao" required>
+                            </div>
+                            <div class="col-12">
+                                <label for="observacoes" class="form-label">Observações:</label>
+                                <textarea class="form-control" id="observacoes" rows="2"></textarea>
+                            </div>
+                            <div class="col-12">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-save me-1"></i> Designar Território
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Filtros -->
+                <div class="filter-container mb-4">
+                    <div class="row align-items-end">
+                        <div class="col-md-3">
+                            <label for="filtro-status" class="form-label">Status:</label>
+                            <select class="form-select" id="filtro-status">
+                                <option value="ativo">Ativos</option>
+                                <option value="concluido">Concluídos</option>
+                                <option value="todos">Todos</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="filtro-saida" class="form-label">Saída de Campo:</label>
+                            <select class="form-select" id="filtro-saida">
+                                <option value="">Todas</option>
+                                <!-- Opções serão adicionadas via JavaScript -->
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="filtro-responsavel" class="form-label">Responsável:</label>
+                            <input type="text" class="form-control" id="filtro-responsavel" placeholder="Filtrar por responsável">
+                        </div>
+                        <div class="col-md-3 d-flex align-items-end">
+                            <button class="btn btn-secondary w-100" id="btn-limpar-filtros">
+                                <i class="fas fa-filter me-1"></i> Limpar Filtros
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Visualização de Calendário (inicialmente oculta) -->
+                <div class="card mb-4 d-none" id="calendario-view">
+                    <div class="card-header bg-info text-white">
+                        <h5 class="mb-0"><i class="fas fa-calendar-alt me-2"></i>Calendário de Designações</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="calendar-container">
+                            <div class="calendar-header">
+                                <div class="calendar-title" id="calendar-month-year">Março 2025</div>
+                                <div class="calendar-nav">
+                                    <button id="prev-month"><i class="fas fa-chevron-left"></i></button>
+                                    <button id="next-month"><i class="fas fa-chevron-right"></i></button>
+                                </div>
+                            </div>
+                            <div class="calendar-grid" id="calendar-grid">
+                                <!-- Dias da semana -->
+                                <div class="calendar-day-header">Dom</div>
+                                <div class="calendar-day-header">Seg</div>
+                                <div class="calendar-day-header">Ter</div>
+                                <div class="calendar-day-header">Qua</div>
+                                <div class="calendar-day-header">Qui</div>
+                                <div class="calendar-day-header">Sex</div>
+                                <div class="calendar-day-header">Sáb</div>
+                                
+                                <!-- Os dias do mês serão adicionados via JavaScript -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Lista de Designações -->
+                <div class="mb-4">
+                    <div class="text-center my-5" id="loading">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Carregando...</span>
+                        </div>
+                        <p class="mt-2">Carregando designações...</p>
+                    </div>
+                    
+                    <div class="alert alert-info d-none" id="sem-dados">
+                        <i class="fas fa-info-circle me-2"></i> Nenhuma designação encontrada. Utilize o formulário acima para designar territórios.
+                    </div>
+                    
+                    <div id="designacoes-container">
+                        <!-- As designações serão adicionadas aqui dinamicamente -->
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Modal para conclusão de designação -->
+    <div class="modal fade" id="modal-concluir" tabindex="-1" aria-labelledby="modal-concluir-label" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modal-concluir-label">Concluir Designação</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="designacao-id">
+                    <p id="modal-info-designacao">Concluir designação do território: <strong>Território 1</strong></p>
+                    
+                    <div class="mb-3">
+                        <label for="data-conclusao" class="form-label">Data de Conclusão:</label>
+                        <input type="date" class="form-control" id="data-conclusao" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="resultado" class="form-label">Resultado:</label>
+                        <select class="form-select" id="resultado" required>
+                            <option value="">Selecione um resultado</option>
+                            <option value="completo">Território Completamente Trabalhado</option>
+                            <option value="parcial">Parcialmente Trabalhado</option>
+                            <option value="problemas">Dificuldades Encontradas</option>
+                        </select>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="observacoes-conclusao" class="form-label">Observações:</label>
+                        <textarea class="form-control" id="observacoes-conclusao" rows="3"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-success" id="btn-confirmar-conclusao">Confirmar Conclusão</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para ver detalhes de designação -->
+    <div class="modal fade" id="modal-detalhes" tabindex="-1" aria-labelledby="modal-detalhes-label" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modal-detalhes-label">Detalhes da Designação</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <h6 class="mb-2">Território:</h6>
+                            <p id="detalhe-territorio" class="fw-bold">Território 1</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="mb-2">Responsável:</h6>
+                            <p id="detalhe-responsavel">João Silva</p>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <h6 class="mb-2">Saída de Campo:</h6>
+                            <p id="detalhe-saida">Saída 1</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="mb-2">Status:</h6>
+                            <p id="detalhe-status"><span class="badge bg-success">Ativo</span></p>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-4">
+                        <div class="col-md-4">
+                            <h6 class="mb-2">Data de Designação:</h6>
+                            <p id="detalhe-data-designacao">01/03/2025</p>
+                        </div>
+                        <div class="col-md-4">
+                            <h6 class="mb-2">Data de Devolução:</h6>
+                            <p id="detalhe-data-devolucao">31/03/2025</p>
+                        </div>
+                        <div class="col-md-4">
+                            <h6 class="mb-2">Data de Conclusão:</h6>
+                            <p id="detalhe-data-conclusao">-</p>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <h6 class="mb-2">Observações:</h6>
+                        <p id="detalhe-observacoes">-</p>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <h6 class="mb-2">Resultado:</h6>
+                        <p id="detalhe-resultado">-</p>
+                    </div>
+                    
+                    <h6 class="mb-3">Progresso de Atendimentos</h6>
+                    <div class="progress-container">
+                        <div class="progress-label">
+                            <span>Imóveis Atendidos:</span>
+                            <span id="detalhe-progresso-porcentagem">0% (0/0)</span>
+                        </div>
+                        <div class="progress">
+                            <div class="progress-bar bg-success" id="detalhe-progresso-barra" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                    <a href="#" class="btn btn-primary" id="btn-ver-territorio">Ver Território</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript comum -->
+    <script src="/assets/js/common.js"></script>
+    <script src="/assets/js/data.js"></script>
+    <script src="/assets/js/components.js"></script>
+    <script src="/assets/js/notifications.js"></script>
+    <!-- Frameworks externos via CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/locale/pt-br.min.js"></script>
+    <!-- JavaScript específico da página -->
+    <script src="/modules/territorios/js/designar.js"></script>
+
+    <script>
+        // Inicializar a página
+        document.addEventListener('DOMContentLoaded', initPage);
+    </script>
+</body>
+</html>

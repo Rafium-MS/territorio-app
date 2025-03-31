@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Território do Dia - Sistema de Territórios</title>
+    <!-- CSS comum -->
+    <link href="/assets/css/main.css" rel="stylesheet">
+    <link href="/assets/css/styles.css" rel="stylesheet">
+    <!-- CSS específico da página -->
+    <link href="/modules/territorios/css/territorio-dia.css" rel="stylesheet">
+    <!-- Frameworks externos via CDN -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <header class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0 shadow">
+        <a class="navbar-brand col-md-3 col-lg-2 me-0 px-3" href="#">Sistema de Territórios</a>
+        <button class="navbar-toggler position-absolute d-md-none collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="w-100"></div>
+        <div class="navbar-nav">
+            <div class="nav-item text-nowrap">
+                <a class="nav-link px-3" href="#">Sair</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="container-fluid">
+        <div class="row">
+            <nav id="sidebar-container" class="col-md-3 col-lg-2 d-md-block sidebar collapse">
+                <!-- Sidebar será carregado aqui via JavaScript -->
+            </nav>
+
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                    <h1 class="h2">Território do Dia</h1>
+                    <div class="btn-toolbar mb-2 mb-md-0">
+                        <div class="btn-group me-2">
+                            <button type="button" class="btn btn-sm btn-outline-secondary" id="btn-imprimir">
+                                <i class="fas fa-print"></i> Imprimir
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Loading -->
+                <div class="text-center my-5" id="loading">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Carregando...</span>
+                    </div>
+                    <p class="mt-2">Carregando território do dia...</p>
+                </div>
+
+                <!-- Território do Dia (escondido inicialmente) -->
+                <div class="territorio-card d-none" id="territorio-container">
+                    <div class="territorio-header">
+                        <div class="row align-items-center">
+                            <div class="col-md-8">
+                                <h3 id="territorio-nome">Nome do Território</h3>
+                                <p class="text-muted mb-0" id="territorio-descricao">Descrição do território</p>
+                            </div>
+                            <div class="col-md-4 text-md-end mt-3 mt-md-0">
+                                <span class="badge bg-info badge-lg" id="saida-campo">Saída de Campo</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="territorio-stats">
+                        <div class="stat-box">
+                            <div class="stat-icon">
+                                <i class="fas fa-map-marked-alt"></i>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-value" id="total-ruas">0</div>
+                                <div class="stat-label">Total de Ruas</div>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-box">
+                            <div class="stat-icon">
+                                <i class="fas fa-home"></i>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-value" id="total-imoveis">0</div>
+                                <div class="stat-label">Total de Imóveis</div>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-box">
+                            <div class="stat-icon">
+                                <i class="fas fa-calendar-check"></i>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-value" id="data-designacao">--/--/----</div>
+                                <div class="stat-label">Designado em</div>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-box">
+                            <div class="stat-icon">
+                                <i class="fas fa-calendar-times"></i>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-value" id="data-devolucao">--/--/----</div>
+                                <div class="stat-label">Devolução</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="territorio-progress">
+                        <div class="progress-label">
+                            <span>Progresso de Atendimentos:</span>
+                            <span id="progresso-porcentagem">0% (0/0)</span>
+                        </div>
+                        <div class="progress">
+                            <div class="progress-bar bg-success" id="progresso-atendimentos" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="territorio-info">
+                        <div class="info-row">
+                            <div class="info-label">
+                                <i class="fas fa-user"></i> Responsável:
+                            </div>
+                            <div class="info-value" id="responsavel">Nome do responsável</div>
+                        </div>
+                        
+                        <div class="info-row">
+                            <div class="info-label">
+                                <i class="fas fa-history"></i> Última visita:
+                            </div>
+                            <div class="info-value" id="ultima-visita">--/--/----</div>
+                        </div>
+                        
+                        <div class="info-row">
+                            <div class="info-label">
+                                <i class="fas fa-sticky-note"></i> Observações:
+                            </div>
+                            <div class="info-value" id="observacoes">-</div>
+                        </div>
+                    </div>
+                    
+                    <div class="territorio-actions">
+                        <a href="#" class="btn btn-primary" id="btn-visualizar">
+                            <i class="fas fa-map me-1"></i> Visualizar Território
+                        </a>
+                        <a href="#" class="btn btn-outline-success" id="btn-registrar">
+                            <i class="fas fa-check me-1"></i> Registrar Atendimentos
+                        </a>
+                        <a href="#" class="btn btn-outline-danger" id="btn-concluir">
+                            <i class="fas fa-flag-checkered me-1"></i> Concluir Designação
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Sem Território do Dia -->
+                <div class="sem-territorio-card d-none" id="sem-territorio-container">
+                    <div class="sem-territorio-icon">
+                        <i class="fas fa-map-signs"></i>
+                    </div>
+                    <h3>Nenhum território designado para hoje</h3>
+                    <p>Não há territórios designados para a data atual.</p>
+                    <div class="sem-territorio-actions">
+                        <a href="designar.html" class="btn btn-primary">
+                            <i class="fas fa-plus-circle me-1"></i> Designar Território
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Próximas Designações -->
+                <div class="proximas-designacoes mt-5">
+                    <h2 class="section-title">
+                        <i class="fas fa-calendar-alt me-2"></i> Próximas Designações
+                    </h2>
+                    
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>Território</th>
+                                            <th>Saída</th>
+                                            <th>Responsável</th>
+                                            <th>Designação</th>
+                                            <th>Devolução</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="proximas-designacoes">
+                                        <!-- Linhas serão adicionadas dinamicamente -->
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="alert alert-info d-none" id="sem-proximas">
+                                Não há próximas designações agendadas.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- JavaScript comum -->
+    <script src="/assets/js/common.js"></script>
+    <script src="/assets/js/data.js"></script>
+    <script src="/assets/js/components.js"></script>
+    <!-- Frameworks externos via CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/locale/pt-br.min.js"></script>
+    <!-- JavaScript específico da página -->
+    <script src="/modules/territorios/js/territorio-dia.js"></script>
+
+    <script>
+        // Inicializar a página
+        document.addEventListener('DOMContentLoaded', initPage);
+    </script>
+</body>
+</html>
