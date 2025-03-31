@@ -1,44 +1,104 @@
 <div class="sidebar-sticky pt-3">
+    <!-- Miniatura do perfil do usuário na versão mobile -->
+    <div class="d-md-none user-profile-mini p-3 mb-3 border-bottom">
+        <div class="d-flex align-items-center">
+            <div class="user-avatar me-3">
+                <i class="fas fa-user-circle fa-2x"></i>
+            </div>
+            <div>
+                <div id="sidebar-user-name">Nome do Usuário</div>
+                <small class="text-muted" id="sidebar-user-role">Cargo</small>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Pesquisa mobile -->
+    <div class="d-md-none px-3 mb-3">
+        <form class="mobile-search-form">
+            <div class="input-group">
+                <input type="text" class="form-control" placeholder="Pesquisar..." aria-label="Pesquisar">
+                <button class="btn btn-outline-secondary" type="submit">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Menu principal -->
     <ul class="nav flex-column" id="sidebar-menu">
         <li class="nav-item">
             <a class="nav-link" href="/index.html">
-                <i class="fas fa-home"></i> Dashboard
+                <i class="fas fa-home me-2"></i> Dashboard
+                <span class="badge rounded-pill bg-primary ms-2">Novo</span>
             </a>
         </li>
+        
+        <!-- Menu colapsável: Territórios -->
         <li class="nav-item">
-            <a class="nav-link" href="/modules/territorios/cadastro.html">
-                <i class="fas fa-map-marked-alt"></i> Cadastro de Territórios
+            <a class="nav-link dropdown-toggle" href="#territorios-submenu" data-bs-toggle="collapse" 
+               role="button" aria-expanded="false">
+                <i class="fas fa-map-marked-alt me-2"></i> Territórios
             </a>
+            <div class="collapse" id="territorios-submenu">
+                <ul class="nav flex-column submenu">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/modules/territorios/cadastro.html">
+                            <i class="fas fa-plus-circle me-2"></i> Cadastro
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/modules/territorios/visualizar.html">
+                            <i class="fas fa-eye me-2"></i> Visualizar
+                        </a>
+                    </li>
+                </ul>
+            </div>
         </li>
+        
         <li class="nav-item">
             <a class="nav-link" href="/modules/saidas/saidas.html">
-                <i class="fas fa-calendar-alt"></i> Saídas de Campo
+                <i class="fas fa-calendar-alt me-2"></i> Saídas de Campo
             </a>
         </li>
+        
+        <!-- Menu colapsável: Designações -->
         <li class="nav-item">
-            <a class="nav-link" href="/modules/designacoes/designar.html">
-                <i class="fas fa-tasks"></i> Designação
+            <a class="nav-link dropdown-toggle" href="#designacoes-submenu" data-bs-toggle="collapse" 
+               role="button" aria-expanded="false">
+                <i class="fas fa-tasks me-2"></i> Designações
             </a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" href="/modules/designacoes/territorio-dia.html">
-                <i class="fas fa-clipboard-check"></i> Território do Dia
-            </a>
+            <div class="collapse" id="designacoes-submenu">
+                <ul class="nav flex-column submenu">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/modules/designacoes/designar.html">
+                            <i class="fas fa-clipboard-list me-2"></i> Gerenciar
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/modules/designacoes/territorio-dia.html">
+                            <i class="fas fa-clipboard-check me-2"></i> Território do Dia
+                        </a>
+                    </li>
+                </ul>
+            </div>
         </li>
     </ul>
 
     <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
-        <span>Controle de Atendimentos</span>
+        <span>Atendimentos</span>
+        <a class="link-secondary" href="#" aria-label="Adicionar novo relatório">
+            <i class="fas fa-plus-circle"></i>
+        </a>
     </h6>
     <ul class="nav flex-column mb-2">
         <li class="nav-item">
             <a class="nav-link" href="/modules/territorios/visualizar.html">
-                <i class="fas fa-house-user"></i> Residenciais/Comerciais
+                <i class="fas fa-house-user me-2"></i> Residenciais/Comerciais
             </a>
         </li>
         <li class="nav-item">
             <a class="nav-link" href="/modules/predios-vilas/cadastro.html">
-                <i class="fas fa-building"></i> Prédios e Vilas
+                <i class="fas fa-building me-2"></i> Prédios e Vilas
             </a>
         </li>
     </ul>
@@ -48,14 +108,157 @@
     </h6>
     <ul class="nav flex-column mb-2">
         <li class="nav-item">
-            <a class="nav-link" href="#">
-                <i class="fas fa-chart-bar"></i> Estatísticas
+            <a class="nav-link" href="/modules/relatorios/estatisticas.html">
+                <i class="fas fa-chart-bar me-2"></i> Estatísticas
             </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="#">
-                <i class="fas fa-file-export"></i> Exportar Dados
+            <a class="nav-link" href="/modules/relatorios/exportar.html">
+                <i class="fas fa-file-export me-2"></i> Exportar Dados
             </a>
         </li>
     </ul>
+    
+    <!-- Seção visível apenas para admins -->
+    <div class="admin-only">
+        <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
+            <span>Administração</span>
+        </h6>
+        <ul class="nav flex-column mb-2">
+            <li class="nav-item">
+                <a class="nav-link" href="/admin/usuarios.html">
+                    <i class="fas fa-users me-2"></i> Usuários
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/admin/logs.html">
+                    <i class="fas fa-history me-2"></i> Logs do Sistema
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/admin/backup.html">
+                    <i class="fas fa-database me-2"></i> Backup e Restauração
+                </a>
+            </li>
+        </ul>
+    </div>
+    
+    <!-- Botão de expansão/contração do menu -->
+    <div class="sidebar-footer d-none d-md-block">
+        <button class="btn btn-sm btn-link w-100 text-center" id="sidebar-collapse-btn">
+            <i class="fas fa-chevron-left"></i>
+        </button>
+    </div>
 </div>
+
+<script>
+    // Script para inicializar a sidebar
+    document.addEventListener('DOMContentLoaded', async function() {
+        // Preencher dados do usuário
+        if (typeof AuthService !== 'undefined') {
+            const user = await AuthService.getCurrentUser();
+            if (user) {
+                const sidebarUserName = document.getElementById('sidebar-user-name');
+                const sidebarUserRole = document.getElementById('sidebar-user-role');
+                
+                if (sidebarUserName) sidebarUserName.textContent = user.nome;
+                
+                const roleMappings = {
+                    'admin': 'Administrador',
+                    'coordenador': 'Coordenador',
+                    'usuario': 'Usuário Padrão'
+                };
+                
+                if (sidebarUserRole) sidebarUserRole.textContent = roleMappings[user.cargo] || user.cargo;
+                
+                // Mostrar/ocultar seções administrativas
+                const adminSections = document.querySelectorAll('.admin-only');
+                adminSections.forEach(section => {
+                    section.style.display = user.cargo === 'admin' ? 'block' : 'none';
+                });
+            }
+        }
+        
+        // Destacar item de menu atual
+        highlightCurrentMenuItem();
+        
+        // Configurar botão de colapso
+        const collapseBtn = document.getElementById('sidebar-collapse-btn');
+        const sidebarContainer = document.getElementById('sidebar-container');
+        const mainContainer = document.querySelector('main');
+        
+        if (collapseBtn && sidebarContainer && mainContainer) {
+            // Verificar estado salvo
+            const isSidebarCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
+            
+            // Aplicar estado inicial
+            if (isSidebarCollapsed) {
+                sidebarContainer.classList.add('sidebar-collapsed');
+                mainContainer.classList.add('main-expanded');
+                collapseBtn.innerHTML = '<i class="fas fa-chevron-right"></i>';
+            }
+            
+            collapseBtn.addEventListener('click', function() {
+                sidebarContainer.classList.toggle('sidebar-collapsed');
+                mainContainer.classList.toggle('main-expanded');
+                
+                const isNowCollapsed = sidebarContainer.classList.contains('sidebar-collapsed');
+                localStorage.setItem('sidebarCollapsed', isNowCollapsed);
+                
+                // Atualizar ícone
+                collapseBtn.innerHTML = isNowCollapsed ? 
+                    '<i class="fas fa-chevron-right"></i>' : 
+                    '<i class="fas fa-chevron-left"></i>';
+            });
+        }
+        
+        // Expandir submenu automaticamente para página atual
+        const currentPath = window.location.pathname;
+        
+        // Verificar se alguma página do submenu está ativa
+        if (currentPath.includes('/territorios/')) {
+            const territoriosSubmenu = document.getElementById('territorios-submenu');
+            if (territoriosSubmenu) {
+                territoriosSubmenu.classList.add('show');
+            }
+        }
+        
+        if (currentPath.includes('/designacoes/')) {
+            const designacoesSubmenu = document.getElementById('designacoes-submenu');
+            if (designacoesSubmenu) {
+                designacoesSubmenu.classList.add('show');
+            }
+        }
+    });
+    
+    // Função para destacar item de menu atual
+    function highlightCurrentMenuItem() {
+        const currentPath = window.location.pathname;
+        
+        // Remover classe ativa de todos os links
+        const menuLinks = document.querySelectorAll('#sidebar-menu .nav-link, .submenu .nav-link');
+        menuLinks.forEach(link => {
+            link.classList.remove('active');
+        });
+        
+        // Adicionar classe ativa ao link atual
+        menuLinks.forEach(link => {
+            if (link.getAttribute('href') && currentPath.includes(link.getAttribute('href'))) {
+                link.classList.add('active');
+                
+                // Se for um item de submenu, expandir o submenu
+                const parentSubmenu = link.closest('.collapse');
+                if (parentSubmenu) {
+                    parentSubmenu.classList.add('show');
+                    
+                    // Destacar também o item pai
+                    const parentLink = document.querySelector(`[href="#${parentSubmenu.id}"]`);
+                    if (parentLink) {
+                        parentLink.classList.add('active');
+                        parentLink.setAttribute('aria-expanded', 'true');
+                    }
+                }
+            }
+        });
+    }
+</script>

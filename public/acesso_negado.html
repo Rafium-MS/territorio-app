@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acesso Negado - Sistema de Territórios</title>
+    <!-- CSS global -->
+    <link href="/assets/css/main.css" rel="stylesheet">
+    <!-- Bootstrap via CDN -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .error-container {
+            min-height: 85vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 2rem;
+        }
+        
+        .error-icon {
+            font-size: 8rem;
+            color: #dc3545;
+            margin-bottom: 2rem;
+            animation: pulse 2s infinite;
+        }
+        
+        .error-code {
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            color: #dc3545;
+        }
+        
+        .error-message {
+            font-size: 1.75rem;
+            font-weight: 500;
+            margin-bottom: 2rem;
+        }
+        
+        .error-details {
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+            max-width: 600px;
+        }
+        
+        .back-link {
+            margin-top: 2rem;
+        }
+        
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            50% {
+                transform: scale(1.1);
+                opacity: 0.8;
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+        
+        [data-theme="dark"] .error-code,
+        [data-theme="dark"] .error-icon {
+            color: #f8636b;
+        }
+    </style>
+</head>
+<body>
+    <div class="container error-container">
+        <div class="error-icon">
+            <i class="fas fa-lock"></i>
+        </div>
+        <div class="error-code">403</div>
+        <h1 class="error-message">Acesso Negado</h1>
+        <p class="error-details">
+            Você não possui permissão para acessar esta página. Isso pode ocorrer porque:
+        </p>
+        <ul class="text-start">
+            <li>Você não tem o nível de acesso necessário</li>
+            <li>Sua conta precisa ser aprovada pelo administrador</li>
+            <li>A página está restrita a um grupo específico de usuários</li>
+        </ul>
+        <div class="error-actions">
+            <a href="/index.html" class="btn btn-primary me-2">
+                <i class="fas fa-home me-2"></i>Voltar para o Dashboard
+            </a>
+            <button type="button" class="btn btn-outline-secondary" onclick="history.back()">
+                <i class="fas fa-arrow-left me-2"></i>Voltar à página anterior
+            </button>
+        </div>
+        <div class="back-link">
+            <p>Se acredita que isso é um erro, por favor <a href="/modules/ajuda/suporte.html">entre em contato com o suporte</a>.</p>
+        </div>
+    </div>
+    
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script src="/assets/js/auth.js"></script>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Verificar o tema atual e aplicar
+            const currentTheme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', currentTheme);
+            
+            // Após 5 segundos, redirecionar para a página principal se o usuário tiver permissão
+            setTimeout(async function() {
+                if (typeof AuthService !== 'undefined') {
+                    const user = await AuthService.getCurrentUser();
+                    if (user && user.cargo === 'admin') {
+                        // Se for admin, não deveria estar vendo esta página, redirecionar
+                        window.location.href = '/index.html';
+                    }
+                }
+            }, 5000);
+        });
+    </script>
+</body>
+</html>

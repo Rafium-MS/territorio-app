@@ -1,0 +1,281 @@
+<header class="navbar navbar-dark sticky-top bg-primary flex-md-nowrap p-0 shadow">
+    <a class="navbar-brand col-md-3 col-lg-2 me-0 px-3" href="/">
+        <i class="fas fa-map-marked-alt me-2"></i>Sistema de Territórios
+    </a>
+    <button class="navbar-toggler position-absolute d-md-none collapsed" type="button" 
+            data-bs-toggle="collapse" data-bs-target="#sidebarMenu" 
+            aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    
+    <!-- Barra de pesquisa -->
+    <div class="search-container d-none d-md-flex flex-grow-1 mx-3">
+        <form class="w-100" id="search-form">
+            <div class="input-group">
+                <input type="text" class="form-control" id="search-input" 
+                       placeholder="Pesquisar territórios, designações..." aria-label="Search">
+                <button class="btn btn-outline-light" type="submit">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+        </form>
+    </div>
+    
+    <!-- Menu do usuário -->
+    <div class="navbar-nav">
+        <div class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle px-3" href="#" id="userDropdown" role="button"
+               data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="fas fa-user-circle me-1"></i>
+                <span id="user-name">Usuário</span>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                <li>
+                    <span class="dropdown-item-text">
+                        <strong id="user-fullname">Nome do Usuário</strong>
+                        <span class="d-block small text-muted" id="user-role">Cargo do Usuário</span>
+                    </span>
+                </li>
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item" href="/modules/usuarios/perfil.html">
+                    <i class="fas fa-user me-2"></i>Meu Perfil
+                </a></li>
+                <li><a class="dropdown-item" href="/modules/usuarios/configuracoes.html">
+                    <i class="fas fa-cog me-2"></i>Configurações
+                </a></li>
+                <li class="admin-only"><a class="dropdown-item" href="/admin/dashboard.html">
+                    <i class="fas fa-users-cog me-2"></i>Administração
+                </a></li>
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item" href="#" id="btn-logout">
+                    <i class="fas fa-sign-out-alt me-2"></i>Sair
+                </a></li>
+            </ul>
+        </div>
+        
+        <!-- Notificações -->
+        <div class="nav-item dropdown">
+            <a class="nav-link px-3 position-relative" href="#" id="notificationsDropdown" 
+               role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="fas fa-bell"></i>
+                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" id="notification-badge">
+                    0
+                </span>
+            </a>
+            <div class="dropdown-menu dropdown-menu-end notifications-dropdown" 
+                 aria-labelledby="notificationsDropdown">
+                <div class="dropdown-header d-flex justify-content-between align-items-center">
+                    <span>Notificações</span>
+                    <a href="#" class="text-decoration-none small" id="mark-all-read">Marcar todas como lidas</a>
+                </div>
+                <div class="notifications-container" id="notifications-container">
+                    <!-- Notificações serão adicionadas aqui dinamicamente -->
+                    <div class="dropdown-item-text text-center text-muted py-2" id="no-notifications">
+                        <i class="fas fa-bell-slash me-1"></i>Nenhuma notificação
+                    </div>
+                </div>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item text-center" href="/modules/usuarios/notificacoes.html">
+                    Ver todas notificações
+                </a>
+            </div>
+        </div>
+        
+        <!-- Botão de tema (claro/escuro) -->
+        <div class="nav-item">
+            <button class="nav-link px-3" id="theme-toggle" title="Alternar tema">
+                <i class="fas fa-moon" id="theme-icon"></i>
+            </button>
+        </div>
+    </div>
+</header>
+
+<script>
+    // Script para inicializar o header
+    document.addEventListener('DOMContentLoaded', async function() {
+        // Configurar informações do usuário
+        if (typeof AuthService !== 'undefined') {
+            const user = await AuthService.getCurrentUser();
+            if (user) {
+                document.getElementById('user-name').textContent = user.nome.split(' ')[0];
+                document.getElementById('user-fullname').textContent = user.nome;
+                
+                const roleMappings = {
+                    'admin': 'Administrador',
+                    'coordenador': 'Coordenador',
+                    'usuario': 'Usuário Padrão'
+                };
+                
+                document.getElementById('user-role').textContent = roleMappings[user.cargo] || user.cargo;
+                
+                // Botão de logout
+                document.getElementById('btn-logout').addEventListener('click', function(e) {
+                    e.preventDefault();
+                    AuthService.logout();
+                });
+            }
+        }
+        
+        // Configurar pesquisa
+        const searchForm = document.getElementById('search-form');
+        if (searchForm) {
+            searchForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const searchTerm = document.getElementById('search-input').value.trim();
+                if (searchTerm) {
+                    window.location.href = `/modules/resultados-busca.html?q=${encodeURIComponent(searchTerm)}`;
+                }
+            });
+        }
+        
+        // Configurar botão de tema
+        const themeToggle = document.getElementById('theme-toggle');
+        const themeIcon = document.getElementById('theme-icon');
+        
+        if (themeToggle) {
+            // Verificar tema atual
+            const currentTheme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', currentTheme);
+            
+            if (currentTheme === 'dark') {
+                themeIcon.classList.remove('fa-moon');
+                themeIcon.classList.add('fa-sun');
+            }
+            
+            themeToggle.addEventListener('click', function() {
+                // Alternar tema
+                const currentTheme = document.documentElement.getAttribute('data-theme');
+                const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+                
+                document.documentElement.setAttribute('data-theme', newTheme);
+                localStorage.setItem('theme', newTheme);
+                
+                // Alternar ícone
+                if (newTheme === 'dark') {
+                    themeIcon.classList.remove('fa-moon');
+                    themeIcon.classList.add('fa-sun');
+                } else {
+                    themeIcon.classList.remove('fa-sun');
+                    themeIcon.classList.add('fa-moon');
+                }
+            });
+        }
+        
+        // Carregar notificações
+        loadNotifications();
+    });
+    
+    // Função para carregar notificações
+    async function loadNotifications() {
+        const notificationsContainer = document.getElementById('notifications-container');
+        const notificationBadge = document.getElementById('notification-badge');
+        const noNotificationsEl = document.getElementById('no-notifications');
+        const markAllReadBtn = document.getElementById('mark-all-read');
+        
+        try {
+            // Em um sistema real, faria uma requisição para buscar as notificações
+            // Simulando algumas notificações de exemplo
+            const notifications = [
+                {
+                    id: '1',
+                    title: 'Designação próxima do vencimento',
+                    message: 'A designação do Território 3 vence em 3 dias.',
+                    time: '2 horas atrás',
+                    read: false,
+                    url: '/modules/designacoes/designar.html?view=3'
+                },
+                {
+                    id: '2',
+                    title: 'Nova designação',
+                    message: 'O território 5 foi designado para você.',
+                    time: '1 dia atrás',
+                    read: true,
+                    url: '/modules/designacoes/territorio-dia.html'
+                }
+            ];
+            
+            // Contar não lidas
+            const unreadCount = notifications.filter(n => !n.read).length;
+            
+            if (unreadCount > 0) {
+                notificationBadge.textContent = unreadCount;
+                notificationBadge.classList.remove('d-none');
+            } else {
+                notificationBadge.classList.add('d-none');
+            }
+            
+            // Renderizar notificações
+            if (notifications.length > 0) {
+                noNotificationsEl.classList.add('d-none');
+                
+                notificationsContainer.innerHTML = notifications.map(notification => `
+                    <a href="${notification.url}" class="dropdown-item notification-item ${notification.read ? 'read' : 'unread'}">
+                        <div class="d-flex w-100 justify-content-between">
+                            <h6 class="mb-1">${notification.title}</h6>
+                            <small class="text-muted">${notification.time}</small>
+                        </div>
+                        <p class="mb-1">${notification.message}</p>
+                    </a>
+                `).join('');
+            } else {
+                noNotificationsEl.classList.remove('d-none');
+            }
+            
+            // Configurar "marcar todas como lidas"
+            markAllReadBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                // Em um sistema real, faria uma requisição para marcar todas como lidas
+                const notificationItems = document.querySelectorAll('.notification-item');
+                notificationItems.forEach(item => {
+                    item.classList.add('read');
+                    item.classList.remove('unread');
+                });
+                
+                notificationBadge.classList.add('d-none');
+            });
+            
+        } catch (error) {
+            console.error('Erro ao carregar notificações:', error);
+        }
+    }
+</script>
+
+<style>
+    /* Estilos para o header */
+    .navbar-brand {
+        font-weight: 600;
+    }
+    
+    .search-container {
+        max-width: 500px;
+    }
+    
+    .notifications-dropdown {
+        width: 350px;
+        max-height: 400px;
+        overflow-y: auto;
+    }
+    
+    .notification-item {
+        padding: 0.75rem 1rem;
+        border-bottom: 1px solid rgba(0,0,0,0.05);
+    }
+    
+    .notification-item.unread {
+        background-color: var(--bs-primary-bg-subtle);
+    }
+    
+    .notification-item:hover {
+        background-color: var(--bs-tertiary-bg);
+    }
+    
+    #theme-toggle {
+        background: transparent;
+        border: none;
+    }
+    
+    [data-theme="dark"] .navbar {
+        background-color: #1a1a2e !important;
+    }
+</style>

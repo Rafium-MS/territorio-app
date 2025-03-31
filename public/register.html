@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro - Sistema de Territórios</title>
+    <!-- CSS global -->
+    <link href="/assets/css/main.css" rel="stylesheet">
+    <link href="/assets/css/login.css" rel="stylesheet">
+    <!-- Bootstrap via CDN -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+    <div class="container">
+        <div class="row justify-content-center align-items-center min-vh-100">
+            <div class="col-md-8 col-lg-6">
+                <div class="card shadow-lg border-0 rounded-lg">
+                    <div class="card-header bg-primary text-white text-center py-4">
+                        <h2 class="fw-bold mb-0">
+                            <i class="fas fa-map-marked-alt me-2"></i>Sistema de Territórios
+                        </h2>
+                    </div>
+                    <div class="card-body p-5">
+                        <div class="text-center mb-4">
+                            <h4>Cadastro de Novo Usuário</h4>
+                            <p class="text-muted">Preencha os dados abaixo para criar sua conta</p>
+                        </div>
+                        
+                        <div id="alert-container"></div>
+                        
+                        <form id="register-form">
+                            <div class="row mb-3">
+                                <div class="col-md-6 mb-3 mb-md-0">
+                                    <label for="nome" class="form-label">Nome Completo</label>
+                                    <input type="text" class="form-control" id="nome" 
+                                        placeholder="Seu nome completo" required autofocus>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="email" class="form-label">E-mail</label>
+                                    <input type="email" class="form-control" id="email" 
+                                        placeholder="seu@email.com" required>
+                                </div>
+                            </div>
+                            
+                            <div class="row mb-3">
+                                <div class="col-md-6 mb-3 mb-md-0">
+                                    <label for="senha" class="form-label">Senha</label>
+                                    <div class="input-group">
+                                        <input type="password" class="form-control" id="senha" 
+                                            placeholder="Crie uma senha" required>
+                                        <button class="btn btn-outline-secondary" type="button" id="toggle-password">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                    </div>
+                                    <div class="password-strength mt-1" id="password-strength">
+                                        <div class="progress" style="height: 5px;">
+                                            <div class="progress-bar" role="progressbar" style="width: 0%"></div>
+                                        </div>
+                                        <small class="form-text text-muted">Força da senha: <span id="strength-text">Fraca</span></small>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="confirmar-senha" class="form-label">Confirmar Senha</label>
+                                    <input type="password" class="form-control" id="confirmar-senha" 
+                                        placeholder="Confirme sua senha" required>
+                                    <div class="invalid-feedback" id="confirmar-senha-feedback">
+                                        As senhas não coincidem.
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label for="cargo" class="form-label">Tipo de Conta</label>
+                                <select class="form-select" id="cargo" required>
+                                    <option value="usuario">Usuário Padrão</option>
+                                    <option value="coordenador">Coordenador</option>
+                                    <option value="admin" disabled>Administrador (requer autorização)</option>
+                                </select>
+                                <small class="form-text text-muted">O administrador precisará aprovar sua conta.</small>
+                            </div>
+                            
+                            <div class="form-check mb-4">
+                                <input class="form-check-input" type="checkbox" id="termos" required>
+                                <label class="form-check-label" for="termos">
+                                    Eu concordo com os <a href="#" data-bs-toggle="modal" 
+                                    data-bs-target="#termos-modal">Termos e Condições</a>
+                                </label>
+                                <div class="invalid-feedback">
+                                    Você deve concordar com os termos para prosseguir.
+                                </div>
+                            </div>
+                            
+                            <div class="d-grid gap-2">
+                                <button type="submit" class="btn btn-primary btn-lg" id="btn-register">
+                                    <i class="fas fa-user-plus me-2"></i>Criar Conta
+                                </button>
+                            </div>
+                        </form>
+                        
+                        <div class="mt-4 text-center">
+                            <p>Já tem uma conta? <a href="login.html" class="text-decoration-none">Fazer Login</a></p>
+                        </div>
+                    </div>
+                    <div class="card-footer bg-light py-3 border-0">
+                        <div class="text-center text-muted small">
+                            <p class="mb-0">&copy; 2025 Sistema de Territórios</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal de Termos e Condições -->
+    <div class="modal fade" id="termos-modal" tabindex="-1" aria-labelledby="termos-modal-label" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="termos-modal-label">Termos e Condições</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                </div>
+                <div class="modal-body">
+                    <h5>1. Uso do Sistema</h5>
+                    <p>Este sistema é destinado exclusivamente para o gerenciamento de territórios. O uso indevido poderá resultar na suspensão ou cancelamento da sua conta.</p>
+                    
+                    <h5>2. Privacidade e Dados</h5>
+                    <p>Todas as informações inseridas no sistema devem ser utilizadas apenas para fins relacionados à atividade de gerenciamento de territórios.</p>
+                    
+                    <h5>3. Responsabilidades</h5>
+                    <p>O usuário é responsável por manter suas credenciais de acesso seguras e por todas as atividades realizadas com sua conta.</p>
+                    
+                    <h5>4. Disponibilidade</h5>
+                    <p>O sistema estará disponível na maior parte do tempo, mas pode haver momentos de manutenção programada ou interrupções não planejadas.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="aceitar-termos">Aceitar Termos</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Loading overlay -->
+    <div id="loading-overlay" class="d-none">
+        <div class="spinner-border text-light" role="status">
+            <span class="visually-hidden">Carregando...</span>
+        </div>
+    </div>
+    
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script src="/assets/js/api.js"></script>
+    <script src="/assets/js/auth.js"></script>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const registerForm = document.getElementById('register-form');
+            const alertContainer = document.getElementById('alert-container');
+            const btnRegister = document.getElementById('btn-register');
+            const loadingOverlay = document.getElementById('loading-overlay');
+            const togglePassword = document.getElementById('toggle-password');
+            const senhaInput = document.getElementById('senha');
+            const confirmarSenhaInput = document.getElementById('confirmar-senha');
+            const confirmarSenhaFeedback = document.getElementById('confirmar-senha-feedback');
+            const termosCheck = document.getElementById('termos');
+            const aceitarTermosBtn = document.getElementById('aceitar-termos');
+            const passwordStrength = document.getElementById('password-strength');
+            const strengthBar = passwordStrength.querySelector('.progress-bar');
+            const strengthText = document.getElementById('strength-text');
+            
+            // Verificar se já está logado
+            const token = localStorage.getItem('token');
+            if (token && !AuthService.isTokenExpired()) {
+                window.location.href = '/index.html';
+                return;
+            }
+            
+            // Alternar visibilidade da senha
+            togglePassword.addEventListener('click', function() {
+                if (senhaInput.type === 'password') {
+                    senhaInput.type = 'text';
+                    togglePassword.innerHTML = '<i class="fas fa-eye-slash"></i>';
+                } else {
+                    senhaInput.type = 'password';
+                    togglePassword.innerHTML = '<i class="fas fa-eye"></i>';
+                }
+            });
+            
+            // Aceitar termos
+            aceitarTermosBtn.addEventListener('click', function() {
+                termosCheck.checked = true;
+                validateForm();
+            });
+            
+            // Validar senha e confirmar senha
+            confirmarSenhaInput.addEventListener('input', function() {
+                if (senhaInput.value !== confirmarSenhaInput.value) {
+                    confirmarSenhaInput.classList.add('is-invalid');
+                    confirmarSenhaFeedback.style.display = 'block';
+                } else {
+                    confirmarSenhaInput.classList.remove('is-invalid');
+                    confirmarSenhaFeedback.style.display = 'none';
+                }
+            });
+            
+            // Verificar força da senha
+            senhaInput.addEventListener('input', function() {
+                const password = senhaInput.value;
+                let strength = 0;
+                
+                // Verificações de força
+                if (password.length >= 8) strength += 25;
+                if (password.match(/[A-Z]/)) strength += 25;
+                if (password.match(/[0-9]/)) strength += 25;
+                if (password.match(/[^A-Za-z0-9]/)) strength += 25;
+                
+                // Atualizar barra de progresso
+                strengthBar.style.width = strength + '%';
+                
+                // Definir cores e texto
+                if (strength <= 25) {
+                    strengthBar.className = 'progress-bar bg-danger';
+                    strengthText.textContent = 'Fraca';
+                } else if (strength <= 50) {
+                    strengthBar.className = 'progress-bar bg-warning';
+                    strengthText.textContent = 'Média';
+                } else if (strength <= 75) {
+                    strengthBar.className = 'progress-bar bg-info';
+                    strengthText.textContent = 'Boa';
+                } else {
+                    strengthBar.className = 'progress-bar bg-success';
+                    strengthText.textContent = 'Forte';
+                }
+                
+                // Também verificar confirmação
+                if (confirmarSenhaInput.value && senhaInput.value !== confirmarSenhaInput.value) {
+                    confirmarSenhaInput.classList.add('is-invalid');
+                    confirmarSenhaFeedback.style.display = 'block';
+                } else if (confirmarSenhaInput.value) {
+                    confirmarSenhaInput.classList.remove('is-invalid');
+                    confirmarSenhaFeedback.style.display = 'none';
+                }
+            });
+            
+            // Validar formulário
+            function validateForm() {
+                let isValid = true;
+                
+                // Verificar senha e confirmação
+                if (senhaInput.value !== confirmarSenhaInput.value) {
+                    confirmarSenhaInput.classList.add('is-invalid');
+                    confirmarSenhaFeedback.style.display = 'block';
+                    isValid = false;
+                }
+                
+                // Verificar termos
+                if (!termosCheck.checked) {
+                    termosCheck.classList.add('is-invalid');
+                    isValid = false;
+                } else {
+                    termosCheck.classList.remove('is-invalid');
+                }
+                
+                return isValid;
+            }
+            
+            // Processar o formulário de registro
+            registerForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                if (!validateForm()) {
+                    return;
+                }
+                
+                const nome = document.getElementById('nome').value.trim();
+                const email = document.getElementById('email').value.trim();
+                const senha = senhaInput.value;
+                const cargo = document.getElementById('cargo').value;
+                
+                // Mostrar loading
+                btnRegister.disabled = true;
+                btnRegister.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Criando conta...';
+                loadingOverlay.classList.remove('d-none');
+                
+                try {
+                    await AuthService.register(nome, email, senha, cargo);
+                    
+                    // Mostrar mensagem de sucesso
+                    showAlert('Conta criada com sucesso! Redirecionando...', 'success');
+                    
+                    // Redirecionar após um pequeno delay
+                    setTimeout(() => {
+                        window.location.href = '/index.html';
+                    }, 1500);
+                    
+                } catch (error) {
+                    console.error('Erro:', error);
+                    
+                    if (error.message.includes('já existe')) {
+                        showAlert('Este email já está em uso. Por favor, use outro email ou faça login.', 'danger');
+                    } else {
+                        showAlert('Erro ao criar conta. Por favor, tente novamente.', 'danger');
+                    }
+                    
+                    // Esconder loading
+                    btnRegister.disabled = false;
+                    btnRegister.innerHTML = '<i class="fas fa-user-plus me-2"></i>Criar Conta';
+                    loadingOverlay.classList.add('d-none');
+                }
+            });
+            
+            // Função para mostrar alertas
+            function showAlert(message, type) {
+                alertContainer.innerHTML = `
+                    <div class="alert alert-${type} alert-dismissible fade show" role="alert">
+                        ${message}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
+                    </div>
+                `;
+            }
+        });

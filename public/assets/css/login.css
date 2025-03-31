@@ -1,0 +1,273 @@
+/* 
+   login.css - Estilos para telas de autenticação do Sistema de Territórios
+   Versão: 1.1.0
+   Última atualização: 31/03/2025
+*/
+
+/* Estilos gerais para a página de login/registro */
+body {
+    background-color: var(--body-bg);
+    background-image: linear-gradient(135deg, var(--body-bg) 0%, rgba(13, 110, 253, 0.2) 100%);
+    background-size: cover;
+    background-attachment: fixed;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    padding-top: 0 !important;
+}
+
+/* Container principal */
+.min-vh-100 {
+    min-height: 100vh;
+}
+
+/* Cartão de login */
+.card {
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    overflow: hidden;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+}
+
+.card-header {
+    border-bottom: none;
+    padding: 1.5rem;
+}
+
+.card-body {
+    padding: 2rem;
+}
+
+.card-footer {
+    background-color: transparent;
+    border-top: none;
+    padding: 1.5rem;
+}
+
+/* Formulários */
+.form-label {
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+}
+
+.form-control, .form-select {
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+    border: 1px solid var(--input-border);
+    background-color: var(--input-bg);
+    color: var(--body-color);
+    transition: all 0.2s ease;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: #86b7fe;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+.input-group-text {
+    border-radius: 8px 0 0 8px;
+    padding: 0.75rem 1rem;
+}
+
+.input-group .form-control {
+    border-radius: 0 8px 8px 0;
+}
+
+.input-group .btn {
+    border-radius: 0 8px 8px 0;
+}
+
+/* Botões */
+.btn {
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.btn-lg {
+    padding: 1rem 1.5rem;
+}
+
+.btn-primary {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+}
+
+.btn-primary:hover {
+    background-color: #0a58ca;
+    border-color: #0a53be;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(10, 88, 202, 0.3);
+}
+
+.btn-primary:active {
+    transform: translateY(0);
+    box-shadow: none;
+}
+
+/* Links */
+a {
+    color: #0d6efd;
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+a:hover {
+    color: #0a58ca;
+    text-decoration: underline;
+}
+
+/* Força da senha */
+.password-strength {
+    margin-top: 0.5rem;
+}
+
+.progress {
+    height: 5px;
+    border-radius: 3px;
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
+.form-text {
+    font-size: 0.8rem;
+    margin-top: 0.25rem;
+}
+
+/* Loading overlay */
+#loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+}
+
+/* Animações */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.fade-in {
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+/* Media queries para responsividade */
+@media (max-width: 576px) {
+    .card {
+        margin: 1rem;
+    }
+    
+    .card-body {
+        padding: 1.5rem;
+    }
+}
+
+/* Tema escuro */
+[data-theme="dark"] body {
+    background-image: linear-gradient(135deg, var(--body-bg) 0%, rgba(13, 110, 253, 0.3) 100%);
+}
+
+[data-theme="dark"] .card {
+    background-color: #1e1e1e;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+}
+
+[data-theme="dark"] .card-header,
+[data-theme="dark"] .card-footer {
+    background-color: #1a1a2e;
+}
+
+[data-theme="dark"] .form-control,
+[data-theme="dark"] .form-select,
+[data-theme="dark"] .input-group-text {
+    background-color: #2c2c2c;
+    border-color: #444444;
+    color: #e1e1e1;
+}
+
+[data-theme="dark"] .form-control:focus,
+[data-theme="dark"] .form-select:focus {
+    background-color: #333333;
+}
+
+[data-theme="dark"] .form-control::placeholder {
+    color: #888888;
+}
+
+[data-theme="dark"] .text-muted {
+    color: #a0a0a0 !important;
+}
+
+[data-theme="dark"] .progress {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Elementos adicionais para a página de login */
+.social-login {
+    display: flex;
+    justify-content: center;
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border-color);
+}
+
+.social-login-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin: 0 0.5rem;
+    color: white;
+    transition: all 0.3s ease;
+}
+
+.social-login-button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+}
+
+.social-login-button.google {
+    background-color: #DB4437;
+}
+
+.social-login-button.facebook {
+    background-color: #4267B2;
+}
+
+.social-login-button.microsoft {
+    background-color: #00A4EF;
+}
+
+/* Efeito de flutuação para imagens decorativas */
+.floating-image {
+    animation: float 6s ease-in-out infinite;
+}
+
+@keyframes float {
+    0% {
+        transform: translateY(0px);
+    }
+    50% {
+        transform: translateY(-20px);
+    }
+    100% {
+        transform: translateY(0px);
+    }
+}

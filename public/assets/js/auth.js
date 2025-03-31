@@ -18,6 +18,13 @@ const AuthService = {
                 return null;
             }
             
+            // Primeiro tenta buscar do cache local
+            const cachedUser = localStorage.getItem('currentUser');
+            if (cachedUser) {
+                return JSON.parse(cachedUser);
+            }
+            
+            // Se não tiver no cache, busca do servidor 
             const response = await fetch('/api/auth/me', {
                 headers: {
                     'x-auth-token': this.getToken()
@@ -28,9 +35,19 @@ const AuthService = {
                 throw new Error('Não foi possível obter os dados do usuário');
             }
             
-            return await response.json();
+            const userData = await response.json();
+            // Armazena no cache
+            localStorage.setItem('currentUser', JSON.stringify(userData));
+            return userData;
         } catch (error) {
             console.error('Erro ao obter usuário:', error);
+            
+            // Fallback para modo offline
+            const fallbackUser = localStorage.getItem('offlineUser');
+            if (fallbackUser) {
+                return JSON.parse(fallbackUser);
+            }
+            
             return null;
         }
     },
@@ -38,6 +55,7 @@ const AuthService = {
     // Login
     async login(email, senha) {
         try {
+            // Tenta fazer login no servidor
             const response = await fetch('/api/auth/login', {
                 method: 'POST',
                 headers: {
@@ -54,23 +72,51 @@ const AuthService = {
             
             // Armazenar token
             localStorage.setItem('token', data.token);
+            localStorage.setItem('currentUser', JSON.stringify(data.user));
+            
+            // Configurar expiração do token (8 horas)
+            const expiresAt = new Date();
+            expiresAt.setHours(expiresAt.getHours() + 8);
+            localStorage.setItem('tokenExpires', expiresAt.toString());
             
             return true;
         } catch (error) {
             console.error('Erro no login:', error);
+            
+            // Simular login para modo offline (apenas desenvolvimento)
+            if (process.env.NODE_ENV === 'development' && email === 'admin@exemplo.com') {
+                const fakeToken = 'fake-token-' + Date.now();
+                const fakeUser = {
+                    id: '1',
+                    nome: 'Administrador',
+                    email: 'admin@exemplo.com',
+                    cargo: 'admin'
+                };
+                
+                localStorage.setItem('token', fakeToken);
+                localStorage.setItem('currentUser', JSON.stringify(fakeUser));
+                localStorage.setItem('offlineUser', JSON.stringify(fakeUser));
+                
+                const expiresAt = new Date();
+                expiresAt.setHours(expiresAt.getHours() + 8);
+                localStorage.setItem('tokenExpires', expiresAt.toString());
+                
+                return true;
+            }
+            
             throw error;
         }
     },
     
     // Registro
-    async register(nome, email, senha) {
+    async register(nome, email, senha, cargo = 'usuario') {
         try {
             const response = await fetch('/api/auth/register', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ nome, email, senha })
+                body: JSON.stringify({ nome, email, senha, cargo })
             });
             
             const data = await response.json();
@@ -81,6 +127,7 @@ const AuthService = {
             
             // Armazenar token
             localStorage.setItem('token', data.token);
+            localStorage.setItem('currentUser', JSON.stringify(data.user));
             
             return true;
         } catch (error) {
@@ -92,6 +139,8 @@ const AuthService = {
     // Logout
     logout() {
         localStorage.removeItem('token');
+        localStorage.removeItem('currentUser');
+        localStorage.removeItem('tokenExpires');
         // Redirecionar para a página de login
         window.location.href = '/login.html';
     },
@@ -99,20 +148,97 @@ const AuthService = {
     // Verificar permissão
     async hasPermission(role) {
         const user = await this.getCurrentUser();
-        return user && user.cargo === role;
+        
+        if (!user) return false;
+        
+        // Se o papel for 'admin', eles têm todas as permissões
+        if (user.cargo === 'admin') return true;
+        
+        // Para outros papéis, verificar se corresponde
+        return user.cargo === role;
+    },
+    
+    // Verificar se o token expirou
+    isTokenExpired() {
+        const expiresAt = localStorage.getItem('tokenExpires');
+        if (!expiresAt) return true;
+        
+        return new Date() > new Date(expiresAt);
+    },
+    
+    // Renovar token
+    async refreshToken() {
+        try {
+            const response = await fetch('/api/auth/refresh', {
+                method: 'POST',
+                headers: {
+                    'x-auth-token': this.getToken()
+                }
+            });
+            
+            const data = await response.json();
+            
+            if (!response.ok) {
+                throw new Error(data.msg || 'Erro ao renovar token');
+            }
+            
+            // Atualizar token
+            localStorage.setItem('token', data.token);
+            
+            // Atualizar expiração
+            const expiresAt = new Date();
+            expiresAt.setHours(expiresAt.getHours() + 8);
+            localStorage.setItem('tokenExpires', expiresAt.toString());
+            
+            return true;
+        } catch (error) {
+            console.error('Erro ao renovar token:', error);
+            return false;
+        }
     }
 };
 
 // Verificar autenticação em páginas restritas
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', async function() {
     // Verificar se a página atual requer autenticação
-    const publicPages = ['/login.html', '/register.html'];
+    const publicPages = ['/login.html', '/register.html', '/recuperar-senha.html'];
     const currentPath = window.location.pathname;
     
-    if (!publicPages.includes(currentPath) && !AuthService.isAuthenticated()) {
-        // Redirecionar para página de login
-        window.location.href = '/login.html';
-        return;
+    if (!publicPages.includes(currentPath)) {
+        // Verificar se o usuário está autenticado
+        if (!AuthService.isAuthenticated()) {
+            // Redirecionar para página de login
+            window.location.href = '/login.html?redirect=' + encodeURIComponent(currentPath);
+            return;
+        }
+        
+        // Verificar se o token expirou
+        if (AuthService.isTokenExpired()) {
+            // Tentar renovar o token
+            const refreshSuccess = await AuthService.refreshToken();
+            
+            if (!refreshSuccess) {
+                // Se não conseguir renovar, fazer logout
+                AuthService.logout();
+                return;
+            }
+        }
+        
+        // Verificar permissões específicas de página
+        const adminOnlyPages = [
+            '/admin/',
+            '/modules/usuarios/'
+        ];
+        
+        if (adminOnlyPages.some(page => currentPath.startsWith(page))) {
+            const isAdmin = await AuthService.hasPermission('admin');
+            
+            if (!isAdmin) {
+                // Redirecionar para página de acesso negado
+                window.location.href = '/acesso-negado.html';
+                return;
+            }
+        }
     }
     
     // Configurar eventos globais
@@ -130,13 +256,22 @@ document.addEventListener('DOMContentLoaded', function() {
     const showUserInfo = async () => {
         const user = await AuthService.getCurrentUser();
         if (user) {
-            // Aqui você pode atualizar a UI com informações do usuário
-            console.log('Usuário logado:', user.nome);
+            // Atualizar nome do usuário no header, se existir o elemento
+            const userNameElement = document.getElementById('user-name');
+            if (userNameElement) {
+                userNameElement.textContent = user.nome;
+            }
+            
+            // Exibir/ocultar elementos baseados no cargo
+            const adminElements = document.querySelectorAll('.admin-only');
+            adminElements.forEach(el => {
+                el.style.display = user.cargo === 'admin' ? '' : 'none';
+            });
         }
     };
     
     // Chamar apenas em páginas autenticadas
-    if (AuthService.isAuthenticated()) {
+    if (AuthService.isAuthenticated() && !publicPages.includes(currentPath)) {
         showUserInfo();
     }
 });

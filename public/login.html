@@ -15,10 +15,14 @@
     <div class="container">
         <div class="row justify-content-center align-items-center min-vh-100">
             <div class="col-md-6 col-lg-5">
-                <div class="card shadow-lg">
+                <div class="card shadow-lg border-0 rounded-lg">
+                    <div class="card-header bg-primary text-white text-center py-4">
+                        <h2 class="fw-bold mb-0">
+                            <i class="fas fa-map-marked-alt me-2"></i>Sistema de Territórios
+                        </h2>
+                    </div>
                     <div class="card-body p-5">
                         <div class="text-center mb-4">
-                            <h2 class="fw-bold">Sistema de Territórios</h2>
                             <p class="text-muted">Entre com suas credenciais para acessar</p>
                         </div>
                         
@@ -28,21 +32,44 @@
                             <div class="mb-3">
                                 <label for="email" class="form-label">E-mail</label>
                                 <div class="input-group">
-                                    <span class="input-group-text"><i class="fas fa-envelope"></i></span>
-                                    <input type="email" class="form-control" id="email" placeholder="seu@email.com" required>
+                                    <span class="input-group-text bg-primary text-white">
+                                        <i class="fas fa-envelope"></i>
+                                    </span>
+                                    <input type="email" class="form-control" id="email" 
+                                        placeholder="seu@email.com" required autofocus>
                                 </div>
                             </div>
                             
-                            <div class="mb-4">
-                                <label for="senha" class="form-label">Senha</label>
-                                <div class="input-group">
-                                    <span class="input-group-text"><i class="fas fa-lock"></i></span>
-                                    <input type="password" class="form-control" id="senha" placeholder="Sua senha" required>
+                            <div class="mb-3">
+                                <div class="d-flex justify-content-between">
+                                    <label for="senha" class="form-label">Senha</label>
+                                    <a href="recuperar-senha.html" class="small text-decoration-none">
+                                        Esqueceu a senha?
+                                    </a>
                                 </div>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-primary text-white">
+                                        <i class="fas fa-lock"></i>
+                                    </span>
+                                    <input type="password" class="form-control" id="senha" 
+                                        placeholder="Sua senha" required>
+                                    <button class="btn btn-outline-secondary" type="button" id="toggle-password">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div class="form-check mb-4">
+                                <input class="form-check-input" type="checkbox" id="lembrar">
+                                <label class="form-check-label" for="lembrar">
+                                    Lembrar-me neste dispositivo
+                                </label>
                             </div>
                             
                             <div class="d-grid gap-2">
-                                <button type="submit" class="btn btn-primary btn-lg">Entrar</button>
+                                <button type="submit" class="btn btn-primary btn-lg" id="btn-login">
+                                    <i class="fas fa-sign-in-alt me-2"></i>Entrar
+                                </button>
                             </div>
                         </form>
                         
@@ -50,12 +77,21 @@
                             <p>Não tem uma conta? <a href="register.html" class="text-decoration-none">Registre-se</a></p>
                         </div>
                     </div>
-                </div>
-                
-                <div class="text-center mt-3 text-muted small">
-                    <p>&copy; 2025 Sistema de Territórios. Todos os direitos reservados.</p>
+                    <div class="card-footer bg-light py-3 border-0">
+                        <div class="text-center text-muted small">
+                            <p class="mb-0">&copy; 2025 Sistema de Territórios</p>
+                            <p class="mb-0">Versão 1.1.0</p>
+                        </div>
+                    </div>
                 </div>
             </div>
+        </div>
+    </div>
+    
+    <!-- Loading overlay -->
+    <div id="loading-overlay" class="d-none">
+        <div class="spinner-border text-light" role="status">
+            <span class="visually-hidden">Carregando...</span>
         </div>
     </div>
     
@@ -68,50 +104,102 @@
         document.addEventListener('DOMContentLoaded', function() {
             const loginForm = document.getElementById('login-form');
             const alertContainer = document.getElementById('alert-container');
+            const btnLogin = document.getElementById('btn-login');
+            const loadingOverlay = document.getElementById('loading-overlay');
+            const togglePassword = document.getElementById('toggle-password');
+            const senhaInput = document.getElementById('senha');
+            const lembrarCheck = document.getElementById('lembrar');
+            const emailInput = document.getElementById('email');
             
             // Verificar se já está logado
             const token = localStorage.getItem('token');
             if (token) {
-                window.location.href = '/index.html';
+                // Verificar se o token não está expirado
+                if (!AuthService.isTokenExpired()) {
+                    // Redirecionar para a página anterior ou dashboard
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const redirectUrl = urlParams.get('redirect') || '/index.html';
+                    window.location.href = redirectUrl;
+                    return;
+                } else {
+                    // Token expirado, remover
+                    localStorage.removeItem('token');
+                    localStorage.removeItem('tokenExpires');
+                }
             }
             
+            // Verificar se há email salvo
+            const savedEmail = localStorage.getItem('savedEmail');
+            if (savedEmail) {
+                emailInput.value = savedEmail;
+                lembrarCheck.checked = true;
+            }
+            
+            // Alternar visibilidade da senha
+            togglePassword.addEventListener('click', function() {
+                if (senhaInput.type === 'password') {
+                    senhaInput.type = 'text';
+                    togglePassword.innerHTML = '<i class="fas fa-eye-slash"></i>';
+                } else {
+                    senhaInput.type = 'password';
+                    togglePassword.innerHTML = '<i class="fas fa-eye"></i>';
+                }
+            });
+            
+            // Processar o formulário de login
             loginForm.addEventListener('submit', async function(e) {
                 e.preventDefault();
                 
-                const email = document.getElementById('email').value;
-                const senha = document.getElementById('senha').value;
+                const email = emailInput.value.trim();
+                const senha = senhaInput.value;
+                const lembrar = lembrarCheck.checked;
+                
+                if (!email || !senha) {
+                    showAlert('Por favor, preencha todos os campos.', 'danger');
+                    return;
+                }
+                
+                // Mostrar loading
+                btnLogin.disabled = true;
+                btnLogin.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Entrando...';
+                loadingOverlay.classList.remove('d-none');
                 
                 try {
-                    const response = await fetch('/api/auth/login', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({ email, senha })
-                    });
+                    await AuthService.login(email, senha);
                     
-                    const data = await response.json();
-                    
-                    if (!response.ok) {
-                        throw new Error(data.msg || 'Erro ao fazer login');
+                    // Salvar email se a opção "lembrar" estiver marcada
+                    if (lembrar) {
+                        localStorage.setItem('savedEmail', email);
+                    } else {
+                        localStorage.removeItem('savedEmail');
                     }
                     
-                    // Armazenar token
-                    localStorage.setItem('token', data.token);
-                    
-                    // Redirecionar para a página principal
-                    window.location.href = '/index.html';
+                    // Redirecionar para a página anterior ou dashboard
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const redirectUrl = urlParams.get('redirect') || '/index.html';
+                    window.location.href = redirectUrl;
                     
                 } catch (error) {
-                    // Exibir mensagem de erro
-                    alertContainer.innerHTML = `
-                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                            ${error.message}
-                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
-                        </div>
-                    `;
+                    console.error('Erro:', error);
+                    
+                    showAlert('Email ou senha incorretos. Por favor, tente novamente.', 'danger');
+                    
+                    // Esconder loading
+                    btnLogin.disabled = false;
+                    btnLogin.innerHTML = '<i class="fas fa-sign-in-alt me-2"></i>Entrar';
+                    loadingOverlay.classList.add('d-none');
                 }
             });
+            
+            // Função para mostrar alertas
+            function showAlert(message, type) {
+                alertContainer.innerHTML = `
+                    <div class="alert alert-${type} alert-dismissible fade show" role="alert">
+                        ${message}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
+                    </div>
+                `;
+            }
         });
     </script>
 </body>
