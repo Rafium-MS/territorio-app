@@ -48,7 +48,7 @@ O Sistema de Gerenciamento de Territórios é uma ferramenta completa para gest�
 
 1. Clone o repositório:
    ```bash
-   git clone https://github.com/Rafio-silverio/territorio-app.git
+   git clone https://github.com/Rafium-silverio/territorio-app.git
    cd territorio-app
    ```
 
